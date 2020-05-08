@@ -70,7 +70,7 @@ function randomizeWord(io) {
     gameConfig.currentSentences.push(sentence);
     io.emit(
         "chat_message",
-        `<strong class='game-info'>Type this word:</strong> ${sentence}`
+        `<strong class='game-info'>Type this text:</strong> ${sentence}`
     );
 }
 

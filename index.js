@@ -11,6 +11,10 @@ app.get("/", function(req, res) {
     res.sendFile(path.join(__dirname + "/public/index.html"));
 });
 
+app.get("test", function(req, res) {
+    res.send("testing: 1,2,3");
+});
+
 const io = socketio.listen(http);
 
 io.sockets.on("connection", socketConnectHandler);
@@ -46,6 +50,7 @@ function socketConnectHandler(socket) {
     });
 }
 
-const server = http.listen(9001, function() {
-    console.log("listening on *:9001");
+const port = (process && process.env && process.env.PORT) ? Number(process.env.PORT) : 9001;
+const server = http.listen(port, function() {
+    console.log("listening on ", port);
 });
