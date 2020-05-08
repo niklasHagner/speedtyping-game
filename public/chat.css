@@ -1,0 +1,81 @@
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: black;
+    color: lime;
+    font-family: 'VT323', monospace;
+    font-size: 30px;
+}
+
+body, button, input {
+    font-family: 'VT323', monospace;
+}
+
+input {
+    font-size: 30px;
+    outline: solid 1px green;
+    background: black;
+    color: #f2f2f2;
+}
+
+.sentence-message {
+    color: green;
+}
+
+form {
+    background: blue;
+    padding: 3px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+form input {
+    border-style: solid;
+    border-width: 1px;
+    padding: 10px;
+    width: 85%;
+    margin: 5px;
+}
+
+#chatForm button {
+    width: 100px;
+    background: #f2f2f2;
+    color: black;
+    border: none;
+    padding: 10px;
+    margin: 0 5px;
+    font-size: 30px;
+}
+
+#messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#messages li {
+    padding: 5px 10px;
+}
+
+#messages li:nth-of-type(odd) {
+    background: #023a02;
+}
+#messages li:nth-of-type(even) {
+    background: #184e18;
+}
+
+
+.username {
+    color: yellow;
+}
+
+.game-info {
+    color: #b3da56;
+}
