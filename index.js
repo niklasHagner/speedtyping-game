@@ -5,17 +5,18 @@ var path = require("path");
 var game = require("./game.js");
 var playerManager = require("./playerManager.js");
 const socketio = require("socket.io");
-
 app.use(express.static("public"));
 
+//var port = (process && process.env && process.env.PORT) ? Number(process.env.PORT) : 9001;
+//"http://localhost:" + port
+
 app.get("/", function(req, res) {
-    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    console.log("fullUrl", fullUrl);
     res.sendFile(path.join(__dirname + "/public/index.html"));
 });
 
-app.get("test", function(req, res) {
-    res.send("testing: 1,2,3");
+app.get("/test", function(req, res) {
+    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    res.send("fullUrl:" + fullUrl);
 });
 
 const io = socketio.listen(http);

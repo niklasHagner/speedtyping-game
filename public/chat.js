@@ -1,8 +1,7 @@
 
 const prodMode = false;
-const url = prodMode ? "https://hacky-chatty.herokuapp.com" : "http://localhost:9001";
-//var port = (process && process.env && process.env.PORT) ? Number(process.env.PORT) : 9001;
-//"http://localhost:" + port
+const url = window.location.href;
+// const url = prodMode ? "https://hacky-chatty.herokuapp.com" : "http://localhost:9001";
 var socket = io.connect(url);
 var chatForm = document.getElementById("chat-form");
 var chatFormInput = document.getElementById("chat-input");
