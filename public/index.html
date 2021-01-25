@@ -11,33 +11,10 @@
   <body>
     <header>
       <h1>Keyboard Warrior</h1>
-      <ul class="colors" style="position: absolute; top:0; right: 0;">
-          <li class="color">
-            <span style="background-color: #FC574D" title="#FC574D">#FC574D</span>
-          </li>
-          <li class="color">
-            <span style="background-color: #1C1B1B" title="#1C1B1B">#1C1B1B</span>
-          </li>
-          <li class="color">
-            <span style="background-color: #D54940" title="#D54940">#D54940</span>
-          </li>
-          <li class="color">
-            <span style="background-color: #8E796E" title="#8E796E">#8E796E</span>
-          </li>
-          <li class="color">
-            <span style="background-color: #2BD2AA" title="#2BD2AA">#2BD2AA</span>
-          </li>
-          <li class="color">
-            <span style="background-color: #37E6CA" title="#37E6CA">#37E6CA</span>
-          </li>
-          <li class="color">
-            <span style="background-color: #C4C4C4" title="#C4C4C4">#C4C4C4</span>
-          </li>
-    </ul>
     </header>
     <ul id="messages"></ul>
     <form action="/" method="POST" id="chat-form">
-      <input id="chat-input" autocomplete="off" autofocus="on" spellcheck="false" placeholder="type your message here..." /><button>Send</button>
+      <input tabindex="-1" id="chat-input" autocomplete="off" autofocus="on" spellcheck="false" placeholder="type your message here..." /><button>Send</button>
     </form>
     <script src="/chat.js"></script>
   </body>

@@ -1,10 +1,16 @@
 # Group-Chat Game
 
+* socket.io chat
+
+
 ## Start
 
 ```shell
 $ node index.js
 ```
+
+Browse to `/` to serve a plain HTML file with socket.io clientside script that communicates with the node-server
+
 
 ## Credits
 
