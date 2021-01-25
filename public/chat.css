@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Carter+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
 
 * {
     margin: 0;
@@ -8,45 +10,66 @@
 
 body {
     background-color: black;
-    color: lime;
+    color: #2BD2AA;
     font-family: 'VT323', monospace;
     font-size: 30px;
 }
 
-body, button, input {
+body, 
+button, 
+input {
     font-family: 'VT323', monospace;
+}
+
+header {
+    position: static;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    text-align: center;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    background-color: black;
+    color: #37E6CA;
+    border-bottom: solid 4px #37E6CA;
+}
+header h1 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 40px;
+    color: #FC574D;
 }
 
 input {
     font-size: 30px;
-    outline: solid 1px green;
+    outline: solid 1px #2BD2AA;
     background: black;
-    color: #f2f2f2;
+    color: #37E6CA;
 }
 
 .sentence-message {
-    color: green;
+    color: #C4C4C4;
 }
 
-form {
-    background: blue;
-    padding: 3px;
+#chatForm {
+    width: 100%;
     position: fixed;
     bottom: 0;
-    width: 100%;
+    display: flex;
+    padding: 5px;
+    background: #231c2d;
 }
 
-form input {
+#chatForm input {
     border-style: solid;
     border-width: 1px;
     padding: 10px;
     width: 85%;
-    margin: 5px;
 }
 
 #chatForm button {
     width: 100px;
-    background: #f2f2f2;
+    background: #37E6CA;
     color: black;
     border: none;
     padding: 10px;
@@ -58,24 +81,37 @@ form input {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    overflow-y: scroll;
 }
 
 #messages li {
     padding: 5px 10px;
 }
 
-#messages li:nth-of-type(odd) {
-    background: #023a02;
+#messages li {
+    border-bottom: solid 2px #4e4d4b;
 }
-#messages li:nth-of-type(even) {
-    background: #184e18;
-}
-
 
 .username {
-    color: yellow;
+    background-color: #37E6CA;
+    color: #222;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 .game-info {
-    color: #b3da56;
+    color: #D54940;
+}
+
+.game-message {
+    font-style: italic;
+}
+
+.game-message strong {
+    color: #2BD2AA;
+}
+
+.target-sentence {
+    background-color: #D54940;
+    color: #111;
 }
