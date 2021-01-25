@@ -32,6 +32,14 @@ function addMessage(text) {
     messagesEl.prepend(child);
 }
 
-// ask username
-var username = prompt("Please tell me your name");
-socket.emit("username", username);
+function askUserName() {
+    var username = prompt("Please tell me your name");
+
+    while (username.length < 1 && username.length > 20) {
+        alert("Please enter a name between 1 and 20 characters");
+        username = prompt("What's your name?");
+    }
+    socket.emit("username", username);
+}
+
+askUserName();
