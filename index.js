@@ -3,6 +3,7 @@ const app = express();
 const http = require("http").Server(app);
 var path = require("path");
 var game = require("./game.js");
+var playerManager = require("./playerManager.js");
 const socketio = require("socket.io");
 
 app.use(express.static("public"));
@@ -19,7 +20,6 @@ const io = socketio.listen(http);
 
 io.sockets.on("connection", socketConnectHandler);
 
-const avatars = ["🐸", "🐷", "🐹", "🐵", "🐱", "🐤"];
 
 function socketConnectHandler(socket) {
 
@@ -27,26 +27,36 @@ function socketConnectHandler(socket) {
     
     socket.on("username", function(username) {
         socket.username = username;
-        const avatar = avatars[Math.floor(Math.random() * avatars.length)];
+        const player = playerManager.setUpNewPlayer(username);
         io.emit(
             "is_online",
-            avatar + " <i>" + socket.username + " joined the chat..</i>"
+            `<div class="game-message game-message--join"><icon>${player.avatar}</icon> <span class="username">${player.username}</span> joined the chat..</div>`
         );
     });
 
     socket.on("disconnect", function(username) {
+        const player = playerManager.getPlayerByName(username);
+        if (!player) {
+            console.error("AARGH");
+            return;
+        }
+        playerManager.leave(username);
         io.emit(
             "is_online",
-            "🏃 <i>" + socket.username + " left the chat..</i>"
+            `🏃<div class="game-message game-message--join"><span class="username">${username}</span> left the chat..</i> <icon>${player.avatar}</icon></div>`
         );
     });
 
     socket.on("chat_message", function(message) {
+        const player = playerManager.getPlayerByName(socket.username);
+        console.log(player, message);
+
+        const messageHtml = `<icon>${player.avatar}</icon> <span class='username'>${player.username}:</span> ${message}</i>`;
         io.emit(
             "chat_message",
-            "<strong class='username'>" + socket.username + "</strong>: " + message
+            messageHtml
         );
-        game.updateSentences(io, message);
+        game.updateSentences(io, message, socket);
     });
 }
 
