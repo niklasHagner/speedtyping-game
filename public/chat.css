@@ -51,7 +51,7 @@ input {
     color: #C4C4C4;
 }
 
-#chatForm {
+#chat-form {
     width: 100%;
     position: fixed;
     bottom: 0;
@@ -60,7 +60,7 @@ input {
     background: #231c2d;
 }
 
-#chatForm input {
+#chat-form input {
     border-style: solid;
     border-width: 1px;
     padding: 10px;
@@ -76,7 +76,7 @@ button {
     font-size: 30px;
 }
 
-#chatForm button {
+#chat-form button {
     width: 100px;
 }
 

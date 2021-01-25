@@ -4,14 +4,14 @@ const url = prodMode ? "https://hacky-chatty.herokuapp.com" : "http://localhost:
 //var port = (process && process.env && process.env.PORT) ? Number(process.env.PORT) : 9001;
 //"http://localhost:" + port
 var socket = io.connect(url);
-var formEl = document.getElementById("chatForm");
-var textInputEl = document.getElementById("txt");
+var chatForm = document.getElementById("chat-form");
+var chatFormInput = document.getElementById("chat-input");
 var messagesEl = document.getElementById("messages");
 
-formEl.addEventListener("submit", e => {
+chatForm.addEventListener("submit", e => {
     e.preventDefault();
-    socket.emit("chat_message", textInputEl.value);
-    textInputEl.value = "";
+    socket.emit("chat_message", chatFormInput.value);
+    chatFormInput.value = "";
     return false;
 });
 
@@ -34,34 +34,35 @@ function addMessage(text) {
 
 function askUserName() {
     
-    var userNameModal = document.createElement("div");
-    userNameModal.id = "username-modal";
-    userNameModal.innerHTML = `
+    var usernameModal = document.createElement("div");
+    usernameModal.id = "username-modal";
+    usernameModal.innerHTML = `
         <h2>Enter your name</h2>
         <form id="username-form">
-            <input type="text" minlength="1" maxlength="6">
+            <input type="text" minlength="1" maxlength="6" tabindex="0">
             <button type="submit">Submit</button>
         </form>
         <p class="hidden">* 1 to 6 chars</p>
     `;
     
-    document.body.append(userNameModal);
-    
-    var userNameForm = document.querySelector("#username-form");
-    userNameForm.addEventListener('submit', (e) => {
+    document.body.append(usernameModal);
+    var usernameForm = document.querySelector("#username-form");
+    var usernameInput = usernameForm.querySelector("input");
+    usernameForm.focus();
+    usernameForm.addEventListener('submit', (e) => {
         // var username = prompt("Please tell me your name");
         // while (username.length < 1 && username.length > 20) {
             //     alert("Please enter a name between 1 and 20 characters");
         //     username = prompt("What's your name?");
         // }
-        console.log(e);
         e.preventDefault();
-        var username = userNameForm.querySelector("input").value;
+        var username = usernameInput.value;
         if (username && username.length > 0 && username.length < 7) {
             socket.emit("username", username);
-            userNameModal.classList.add("hidden");
+            usernameModal.classList.add("hidden");
         } else {
-            userNameModal.querySelector("p").classList.remove("hidden");
+            usernameModal.querySelector("p").classList.remove("hidden");
+            chatFormInput.focus();
         }
     });    
 }

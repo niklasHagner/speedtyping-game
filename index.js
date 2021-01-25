@@ -9,6 +9,8 @@ const socketio = require("socket.io");
 app.use(express.static("public"));
 
 app.get("/", function(req, res) {
+    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    console.log("fullUrl", fullUrl);
     res.sendFile(path.join(__dirname + "/public/index.html"));
 });
 
