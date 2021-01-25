@@ -67,14 +67,17 @@ input {
     width: 85%;
 }
 
-#chatForm button {
-    width: 100px;
+button {
     background: #37E6CA;
     color: black;
     border: none;
     padding: 10px;
     margin: 0 5px;
     font-size: 30px;
+}
+
+#chatForm button {
+    width: 100px;
 }
 
 #messages {
@@ -103,10 +106,6 @@ input {
     color: #D54940;
 }
 
-.game-message {
-    font-style: italic;
-}
-
 .game-message strong {
     color: #2BD2AA;
 }
@@ -114,4 +113,24 @@ input {
 .target-sentence {
     background-color: #D54940;
     color: #111;
+}
+
+#username-modal {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #222;
+    color: #D54940;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#username-modal form input {
+    width: 90px;
 }

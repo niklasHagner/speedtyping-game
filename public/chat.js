@@ -33,13 +33,37 @@ function addMessage(text) {
 }
 
 function askUserName() {
-    var username = prompt("Please tell me your name");
-
-    while (username.length < 1 && username.length > 20) {
-        alert("Please enter a name between 1 and 20 characters");
-        username = prompt("What's your name?");
-    }
-    socket.emit("username", username);
+    
+    var userNameModal = document.createElement("div");
+    userNameModal.id = "username-modal";
+    userNameModal.innerHTML = `
+        <h2>Enter your name</h2>
+        <form id="username-form">
+            <input type="text" minlength="1" maxlength="6">
+            <button type="submit">Submit</button>
+        </form>
+        <p class="hidden">* 1 to 6 chars</p>
+    `;
+    
+    document.body.append(userNameModal);
+    
+    var userNameForm = document.querySelector("#username-form");
+    userNameForm.addEventListener('submit', (e) => {
+        // var username = prompt("Please tell me your name");
+        // while (username.length < 1 && username.length > 20) {
+            //     alert("Please enter a name between 1 and 20 characters");
+        //     username = prompt("What's your name?");
+        // }
+        console.log(e);
+        e.preventDefault();
+        var username = userNameForm.querySelector("input").value;
+        if (username && username.length > 0 && username.length < 7) {
+            socket.emit("username", username);
+            userNameModal.classList.add("hidden");
+        } else {
+            userNameModal.querySelector("p").classList.remove("hidden");
+        }
+    });    
 }
 
 askUserName();
