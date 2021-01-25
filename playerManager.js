@@ -11,9 +11,21 @@ const avatars = [
   {emoji:"🐸", occupied: false},
   {emoji:"🐷", occupied: false},
   {emoji:"🐹", occupied: false},
-  {emoji:"🐵", occupied: false},
+  {emoji:"🦊", occupied: false},
+  {emoji:"🐯", occupied: false},
+  {emoji:"🐴", occupied: false},
+  {emoji:"🐰", occupied: false},
+  {emoji:"🐿️", occupied: false},
+  {emoji:"🐨", occupied: false},
+  {emoji:"🐼", occupied: false},
+  {emoji:"🐮", occupied: false},
   {emoji:"🐱", occupied: false},
   {emoji:"🐤", occupied: false},
+  {emoji:"🦖", occupied: false},
+  {emoji:"🐋", occupied: false},
+  {emoji:"🦉", occupied: false},
+  {emoji:"🐔", occupied: false},
+  {emoji:"🐻", occupied: false},
 ];
 
 function getAvatar() {
