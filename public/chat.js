@@ -8,7 +8,12 @@ var messageContainer = document.getElementById("messages");
 
 chatForm.addEventListener("submit", e => {
     e.preventDefault();
-    socket.emit("chat_message", chatFormInput.value);
+    var msg = chatFormInput.value;
+    if (msg === "/start") {
+        socket.emit("start_game", msg);
+    } else {
+        socket.emit("chat_message", msg);
+    }
     chatFormInput.value = "";
     return false;
 });

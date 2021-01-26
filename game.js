@@ -3,7 +3,8 @@ var stringSimilarity = require('string-similarity');
 var playerManager = require("./playerManager.js");
 
 module.exports = {
-    start,
+    initialPrompt,
+    startWordGame,
     stop,
     updateSentences
 };
@@ -17,10 +18,17 @@ const gameConfig = {
     newSentenceCreatedTime: 0
 }
 
-function start(io) {
+function initialPrompt(io) {
     console.log("start game");
+    
+    io.emit(
+        "chat_message",
+        `<div class="game-message"><icon>📜</icon> Start game with the command <span class="target-sentence">/start</span></div>`
+        );
+}
+
+function startWordGame(io) {
     randomizeWord(io);
-    //gameLoop(io);
 }
 
 function updateSentences(io, inputSentence, socket) {
@@ -69,9 +77,7 @@ function updateSentences(io, inputSentence, socket) {
 
 
 function gameLoop(io) {
-    
     // intervalObj = setInterval(()=> { randomizeWord(io) }, gameConfig.intervalMs);
-
     // const timeoutObj = setTimeout(() => {
     //     console.log('starting gameLoop');
     // }, 1500);

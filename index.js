@@ -26,7 +26,7 @@ io.sockets.on("connection", socketConnectHandler);
 
 function socketConnectHandler(socket) {
 
-    game.start(io);
+    game.initialPrompt(io);
     
     socket.on("username", function(username) {
         socket.username = username;
@@ -60,6 +60,14 @@ function socketConnectHandler(socket) {
             messageHtml
         );
         game.updateSentences(io, message, socket);
+    });
+
+    socket.on("start_game", function(message) {
+        io.emit(
+            "chat_message",
+            `<div class="game-message"><icon>📜</icon> Starting game in 3 seconds</div>`
+        );
+        setTimeout(() => { game.startWordGame(io, message, socket);}, 3000);
     });
 }
 
