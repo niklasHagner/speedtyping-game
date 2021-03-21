@@ -2,7 +2,8 @@ module.exports = {
   setUpNewPlayer,
   getPlayerByName,
   leave,
-  updateScore
+  updateScore,
+  getAllPlayersSortedByScore
 };
 
 const players = [];
@@ -64,4 +65,8 @@ function updateScore(username, score) {
   const ix = getPlayerIndexByUserName(username);
   players[ix].score += score;
   return players[ix];
+}
+
+function getAllPlayersSortedByScore() {
+  return players.sort((a,b) => a.score - b.score).reverse();
 }

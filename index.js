@@ -51,10 +51,14 @@ function socketConnectHandler(socket) {
     });
 
     socket.on("chat_message", function(message) {
-        const player = playerManager.getPlayerByName(socket.username);
+        var username = socket.username;
+        if (!username) {
+            
+        }
+        const player = playerManager.getPlayerByName(username);
         console.log(player, message);
 
-        const messageHtml = `<icon>${player.avatar}</icon> <span class='username'>${player.username}:</span> ${message}</i>`;
+        const messageHtml = `<icon>${player.avatar}</icon> <span class='username'>${player.username}:</span> ${message}`;
         io.emit(
             "chat_message",
             messageHtml

@@ -11,10 +11,12 @@
   <body>
     <header>
       <h1>Keyboard Warrior</h1>
+      <div id="highscore">
+      </div>
     </header>
     <ul id="messages"></ul>
     <form action="/" method="POST" id="chat-form">
-      <input tabindex="-1" id="chat-input" autocomplete="off" autofocus="on" spellcheck="false" placeholder="type your message here..." /><button>Send</button>
+      <input id="chat-input" autocomplete="off" spellcheck="false" tabindex="-1" placeholder="message..."><button>Send</button>
     </form>
     <script src="/chat.js"></script>
   </body>

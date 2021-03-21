@@ -39,9 +39,16 @@ function updateSentences(io, inputSentence, socket) {
         const obj = { sentence: existingSentence, similarityFactor: stringSimilarity.compareTwoStrings(existingSentence, inputSentence) };
         similarityFactors.push(obj); 
     });
-    const highestSimilary = similarityFactors.sort((a,b) => a.similarityFactor - b.similarityFactor).reverse()[0];
-    console.log("highestSimilary:", Math.round(highestSimilary.similarityFactor * 100)/100, "input:", inputSentence);
-    if (highestSimilary.similarityFactor < 0.5) {
+    let mostSimilarObj;
+    if (similarityFactors.length > 1) { 
+        similarityFactors.sort((a,b) => a.similarityFactor - b.similarityFactor).reverse()[0];
+    } else {
+        mostSimilarObj = similarityFactors[0];
+    }
+
+    const similarityPercentage = Math.round(mostSimilarObj.similarityFactor * 100);
+    console.log("mostSimilarObj:", similarityPercentage, "%", "input:", inputSentence);
+    if (mostSimilarObj.similarityFactor < 0.5) {
         return;
     }
 
@@ -50,16 +57,14 @@ function updateSentences(io, inputSentence, socket) {
         const now = new Date();
         seconds = Math.round((now.getTime() - gameConfig.newSentenceCreatedTime.getTime()) / 1000);
     }
-    const similarityScore = Math.round(highestSimilary.similarityFactor * 100);
     const scoreDeduction = seconds * 2.5;
-    const score = Math.max(similarityScore - scoreDeduction, 1);
-    console.log(similarityScore, scoreDeduction, score);
+    const score = Math.max(similarityPercentage - scoreDeduction, 1);
+    console.log(similarityPercentage, scoreDeduction, score);
 
     console.log("matching text:", inputSentence, "score:", score);
     const player = playerManager.updateScore(socket.username, score);
-    
 
-    let message = `<icon>⭐</icon> <strong class='game-info'>Good job ${socket.username}, ${similarityScore}% correct in ${seconds}s!</strong> <span style="color: orange"></span>` //${highestSimilary.sentence};
+    let message = `<icon>⭐</icon> <strong class='game-info'>Good job ${socket.username}, ${similarityPercentage}% correct in ${seconds}s!</strong> <span style="color: orange"></span>` //${mostSimilarObj.sentence};
     message += `for ${score} points `;
     if (player.score > score) {
         message += `(total:${player.score})`
@@ -69,6 +74,13 @@ function updateSentences(io, inputSentence, socket) {
         "chat_message",
         message
     );
+    
+    const topPlayers = playerManager.getAllPlayersSortedByScore().slice(0,3);
+    const highScoreStr = topPlayers.map(x => `<icon>${x.avatar}</icon> ${x.username}: ${x.score} pts`).join("  ");
+    io.emit(
+        "highscore",
+        highScoreStr
+    )
 
     gameConfig.currentSentences.splice(matchingIndex, 1);
     gameConfig.newSentenceCreatedTime = new Date();

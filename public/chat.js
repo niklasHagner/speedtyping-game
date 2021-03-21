@@ -22,8 +22,12 @@ socket.on("chat_message", function(msg) {
     addMessage(msg);
 });
 
-socket.on("is_online", function(username) {
-    addMessage(username);
+socket.on("is_online", function(msg) {
+    addMessage(msg);
+});
+
+socket.on("highscore", function(msg) {
+    document.querySelector("#highscore").innerHTML = msg;
 });
 
 function addMessage(text) {
@@ -49,16 +53,23 @@ function askUserName() {
     document.body.append(usernameModal);
     var usernameForm = document.querySelector("#username-form");
     var usernameInput = usernameForm.querySelector("input");
-    usernameForm.focus();
+    window.setTimeout(function () { 
+        document.querySelector("#username-form").focus();
+    },1);
     usernameForm.addEventListener('submit', (e) => {
         e.preventDefault();
         var username = usernameInput.value;
         if (username && username.length > 0 && username.length < 7) {
             socket.emit("username", username);
             usernameModal.classList.add("hidden");
+            // usernameInput.removeAttribute("autofocus");
+            window.setTimeout(function () { 
+                document.querySelector("#username-form").blur();
+                document.getElementById("chat-form").focus();
+            },1);
+            // chatForm.addAttribute("autofocus");
         } else {
             usernameModal.querySelector("p").classList.remove("hidden");
-            chatFormInput.focus();
         }
     });    
 }
