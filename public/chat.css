@@ -11,14 +11,15 @@
 body {
     background-color: black;
     color: #2BD2AA;
-    font-family: 'VT323', monospace;
     font-size: 30px;
+    /* font-family: 'VT323', monospace; */
 }
 
 body, 
 button, 
 input {
-    font-family: 'VT323', monospace;
+    font-family: monospace;
+    /* font-family: 'VT323', monospace; */
 }
 
 header {
@@ -132,5 +133,5 @@ button {
 }
 
 #username-modal form input {
-    width: 90px;
+    width: 160px;
 }

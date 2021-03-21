@@ -44,10 +44,10 @@ function askUserName() {
         <h1>Welcome to Keyboard Warrior</h1>
         <h2>Enter your name</h2>
         <form id="username-form">
-            <input type="text" minlength="1" maxlength="6" tabindex="-1">
+            <input type="text" minlength="1" maxlength="8" tabindex="-1">
             <button type="submit">Submit</button>
         </form>
-        <p class="hidden">* 1 to 6 chars</p>
+        <p class="hidden">Names have to be 1 to 8 chars</p>
     `;
     
     document.body.append(usernameModal);
