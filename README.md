@@ -6,7 +6,7 @@
 ## Start
 
 ```shell
-$ node index.js
+$ node server.js
 ```
 
 Browse to `/` to serve a plain HTML file with socket.io clientside script that communicates with the node-server

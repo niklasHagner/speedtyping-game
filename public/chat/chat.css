@@ -20,6 +20,7 @@ button,
 input {
     font-family: monospace;
     /* font-family: 'VT323', monospace; */
+    border: solid 3px;
 }
 
 header {
@@ -134,4 +135,37 @@ button {
 
 #username-modal form input {
     width: 160px;
+}
+
+.error {
+    border: solid 3px crimson;
+}
+
+/* start hack to remove spacing between spans*/
+#word-matching-area {
+    font-size: 0; 
+}
+#sentence-in-progress, #sentence-remaining {
+    font-size: 24px;
+    position: relative;
+}
+
+#sentence-remaining {
+    color: whitesmoke;
+}
+
+#sentence-in-progress {
+    color: lime;
+}
+
+span#sentence-in-progress:after {
+    content: "-";
+    position: absolute;
+    right: 0;
+    bottom: -12px;
+    color: lime;
+}
+
+.score {
+    color:gold;
 }

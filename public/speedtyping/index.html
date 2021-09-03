@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hackday game</title>
+    <link rel="stylesheet" type="text/css" href="speedtyping/speedtyping.css">
+    <script src="../../socket.io/socket.io.js"></script>
+    <style>
+      .hidden { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Keyboard Warrior</h1>
+      <div id="highscore">
+      </div>
+
+      <section div="racing-wrap">
+        <div id="racing-strip">
+        </div>
+        <div id="racing-table">
+        </div>
+      </section>
+    </header>
+    <div id="word-matching-area">
+      <span id="sentence-in-progress"></span><span id="sentence-remaining"></span>
+    </div>
+
+    <form id="chat-form">
+      <input id="chat-input" autocomplete="off" spellcheck="false" tabindex="-1">
+    </form>
+    <script src="speedtyping//speedtyping.js"></script>
+  </body>
+</html> 

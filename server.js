@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const http = require("http").Server(app);
 var path = require("path");
-var game = require("./game.js");
-var playerManager = require("./playerManager.js");
+var game = require("./lib/game.js");
+var playerManager = require("./lib/playerManager.js");
 const socketio = require("socket.io");
 app.use(express.static("public"));
 
@@ -11,7 +11,7 @@ app.use(express.static("public"));
 //"http://localhost:" + port
 
 app.get("/", function(req, res) {
-    res.sendFile(path.join(__dirname + "/public/index.html"));
+    res.sendFile(path.join(__dirname + "/public/speedtyping/index.html"));
 });
 
 app.get("/test", function(req, res) {
@@ -26,7 +26,7 @@ io.sockets.on("connection", socketConnectHandler);
 
 function socketConnectHandler(socket) {
 
-    game.initialPrompt(io);
+    game.initialPrompt(io, socket.id);
     
     socket.on("username", function(username) {
         socket.username = username;
@@ -35,12 +35,19 @@ function socketConnectHandler(socket) {
             "is_online",
             `<div class="game-message game-message--join"><icon>${player.avatar}</icon> <span class="username">${player.username}</span> joined the chat..</div>`
         );
+        const players = playerManager.getAllPlayersSortedByScore().slice(0,3);
+        const playerString = players.map(x => `<icon>${x.avatar}</icon><span>${x.username}</span>`).join("  ");
+        io.emit(
+            "highscore",
+            playerString
+        )
+        
     });
 
     socket.on("disconnect", function(username) {
         const player = playerManager.getPlayerByName(username);
         if (!player) {
-            console.error("AARGH");
+            console.error("player disconnected:", username);
             return;
         }
         playerManager.leave(username);
@@ -52,10 +59,11 @@ function socketConnectHandler(socket) {
 
     socket.on("chat_message", function(message) {
         var username = socket.username;
-        if (!username) {
-            
-        }
         const player = playerManager.getPlayerByName(username);
+        if (!player) {
+            console.log("player missing for", username);
+            return;
+        }
         console.log(player, message);
 
         const messageHtml = `<icon>${player.avatar}</icon> <span class='username'>${player.username}:</span> ${message}`;
@@ -66,12 +74,26 @@ function socketConnectHandler(socket) {
         game.updateSentences(io, message, socket);
     });
 
+    socket.on("player_move", function(message) {
+        var username = socket.username;
+        game.movePlayer(io, username, message.length);
+        // game.updateSentences(io, message, socket);
+    });
+
+    // socket.on("start_game", function(message) {
+    //     io.emit(
+    //         "chat_message",
+    //         `<div class="game-message"><icon>📜</icon> Starting game in 3 seconds</div>`
+    //     );
+    //     setTimeout(() => { game.startWordGame(io, message, socket);}, 3000);
+    // });
+
     socket.on("start_game", function(message) {
         io.emit(
             "chat_message",
-            `<div class="game-message"><icon>📜</icon> Starting game in 3 seconds</div>`
+            `<div class="game-message"><icon>📜</icon> Starting game</div>`
         );
-        setTimeout(() => { game.startWordGame(io, message, socket);}, 3000);
+        game.startWordGame(io, message, socket);
     });
 }
 
