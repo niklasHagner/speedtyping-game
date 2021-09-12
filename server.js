@@ -35,11 +35,21 @@ function socketConnectHandler(socket) {
             "is_online",
             `<div class="game-message game-message--join"><icon>${player.avatar}</icon> <span class="username">${player.username}</span> joined the chat..</div>`
         );
-        const players = playerManager.getAllPlayersSortedByScore().slice(0,3);
-        const playerString = players.map(x => `<icon>${x.avatar}</icon><span>${x.username}</span>`).join("  ");
+
+        //Show a nice list of avatars
+        // const players = playerManager.getAllPlayersSortedByScore().slice(0,3);
+        // const playerString = players.map(x => `<icon>${x.avatar}</icon><span>${x.username}</span>`).join("  ");
+        // io.emit(
+        //     "highscore",
+        //     playerString
+        // )
+
+        //update avatar list
         io.emit(
-            "highscore",
-            playerString
+            "avatar_move",
+            {
+                players: playerManager.getPlayers()
+            }
         )
         
     });
@@ -71,29 +81,19 @@ function socketConnectHandler(socket) {
             "chat_message",
             messageHtml
         );
-        game.updateSentences(io, message, socket);
     });
 
     socket.on("player_move", function(message) {
         var username = socket.username;
-        game.movePlayer(io, username, message.length);
-        // game.updateSentences(io, message, socket);
+        game.movePlayer(io, username, message);
     });
-
-    // socket.on("start_game", function(message) {
-    //     io.emit(
-    //         "chat_message",
-    //         `<div class="game-message"><icon>📜</icon> Starting game in 3 seconds</div>`
-    //     );
-    //     setTimeout(() => { game.startWordGame(io, message, socket);}, 3000);
-    // });
 
     socket.on("start_game", function(message) {
         io.emit(
             "chat_message",
             `<div class="game-message"><icon>📜</icon> Starting game</div>`
         );
-        game.startWordGame(io, message, socket);
+        game.startNewMatch(io, message, socket);
     });
 }
 

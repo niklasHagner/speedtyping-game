@@ -8,7 +8,6 @@ var messageContainer = document.getElementById("messages");
 var targetSentenceContainer = document.getElementById("word-matching-area");
 var sentenceInProgressEl = document.getElementById("sentence-in-progress");
 var sentenceRemainingEl = document.getElementById("sentence-remaining");
-var racingStripEl = document.getElementById("racing-strip");
 var racingTableEl = document.getElementById("racing-table");
 
 
@@ -149,19 +148,15 @@ socket.on("target_sentence", function (msg) {
 
 socket.on("avatar_move", function (data) {
     const playersHtml = data.players.map(x => `
-        <p>
+        <div class="player-row">
             <span>${x.username}:</span>
-            <span class="score">${x.score} pts</span>
-        </p>
+            <span class="score">${x.wordsPerMinute} wpm</span>
+            <div class="avatar-row">
+                <icon style="left: ${x.percentageOfString_int}%">${x.avatar}</icon>
+            </div>
+        </div>
     `)
-    const avatarRacingHtml = data.players.map(x => `
-        <p style="left: ${x.distance}%;">
-            <icon>${x.avatar}</icon>
-        </p>
-    `)
-
     racingTableEl.innerHTML = playersHtml.join("");
-    racingStripEl.innerHTML = avatarRacingHtml.join("")
 });
 
 //---go---

@@ -173,7 +173,6 @@ span#sentence-in-progress:after {
     color:gold;
 }
 
-
 #racing-wrap {
     width: 100%;
     text-align: right;
@@ -181,15 +180,21 @@ span#sentence-in-progress:after {
     position: relative;
 }
 
-#raging-table > * {
+#racing-table .player-row {
     display: block;
     width: 100%;
     height: 50px;
     border: solid 1px #ccc;
+    text-align: center;
 }
-
-
-#racing-strip > * {
-    width: 100%; height: 100%;
+.player-row .avatar-row {
+    position: relative;
+    width: calc(100% - 26px);
+}
+.player-row icon {
     position: absolute;
+    top: 10px;
+    left: 0px;
+    width: 26px;
+    height: 26px;
 }
