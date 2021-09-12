@@ -48,10 +48,10 @@ function askUserName() {
         <h1>Keyboard Warrior</h1>
         <h2>Enter your name</h2>
         <form id="username-form">
-            <input type="text" minlength="1" maxlength="8" tabindex="-1">
+            <input type="text" minlength="1" maxlength="10" tabindex="-1">
             <button type="submit">Submit</button>
         </form>
-        <p class="hidden">Names have to be 1 to 8 chars</p>
+        <p class="hidden">Names have to be 1 to 10 chars</p>
     `;
 
     document.body.append(usernameModal);
@@ -65,7 +65,7 @@ function askUserName() {
     usernameForm.addEventListener('submit', (e) => {
         e.preventDefault();
         var username = usernameInput.value;
-        if (username && username.length > 0 && username.length < 7) {
+        if (username && username.length > 0 && username.length < 10) {
             acceptUserNameAndStart(username);
         } else {
             usernameModal.querySelector("p").classList.remove("hidden");

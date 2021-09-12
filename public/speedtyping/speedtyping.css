@@ -22,6 +22,10 @@ input {
     /* font-family: 'VT323', monospace; */
 }
 
+button {
+    cursor: pointer;
+}
+
 button, input {
     border: solid 3px;
 }
@@ -132,8 +136,9 @@ button {
     width: 160px;
 }
 
-.error {
-    border: solid 3px crimson;
+#chat-form.error input {
+    color: crimson;
+    outline: solid 1px crimson;
 }
 
 /* hack to remove spacing between spans*/
@@ -155,11 +160,10 @@ button {
 }
 
 span#sentence-in-progress:after {
-    content: "-";
-    position: absolute;
-    right: -15px;
-    bottom: -12px;
+    content: "|";
     color: lime;
+    position: absolute;
+    right: -7px;
 }
 
 .score {

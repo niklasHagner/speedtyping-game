@@ -24,6 +24,14 @@ const GAME = {
 chatFormInput.addEventListener('input', () => {
     var input = chatFormInput.value;
 
+
+    
+    if (GAME.nextWordTarget.indexOf(input) !==0 ) {
+        GAME.incorrectInput = input;
+    } else {
+        GAME.incorrectInput = "";
+    }
+
     if (GAME.nextWordTarget.indexOf(input) === 0) {
         GAME.correctInCurrentWord = input;
         GAME.totalCorrect = GAME.correctOldWords + GAME.correctInCurrentWord;
@@ -32,11 +40,9 @@ chatFormInput.addEventListener('input', () => {
         GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length)
         sentenceRemainingEl.innerText = GAME.remainingTargetText;
     }
-
     if (GAME.nextWordTarget === input) {
         socket.emit("player_move", input);
         chatFormInput.value = "";
-        GAME.incorrectInput = "";
         GAME.correctOldWords += GAME.totalTargetTextSplit[0];
         GAME.totalTargetTextSplit.shift();
         GAME.nextWordTarget = GAME.totalTargetTextSplit[0];
@@ -44,14 +50,12 @@ chatFormInput.addEventListener('input', () => {
 
         // GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length)
         // sentenceRemainingEl.innerText = GAME.remainingTargetText;
-    } else {
-        GAME.incorrectInput = input;
-    }
+    } 
 
     if (GAME.incorrectInput.length > 0) {
-        chatFormInput.classList.add("error");
+        chatForm.classList.add("error");
     } else {
-        chatFormInput.classList.remove("error");
+        chatForm.classList.remove("error");
     }
 
     if (GAME.totalTargetText === GAME.totalCorrect) {
@@ -80,10 +84,10 @@ function askUserName() {
     usernameModal.innerHTML = `
         <h2>Enter your name</h2>
         <form id="username-form">
-            <input type="text" minlength="1" maxlength="8" tabindex="-1">
+            <input type="text" minlength="1" maxlength="10" tabindex="-1">
             <button type="submit">Submit</button>
         </form>
-        <p class="hidden">Names have to be 1 to 8 chars</p>
+        <p class="hidden">Names have to be 1 to 10 chars</p>
     `;
 
     document.body.append(usernameModal);
@@ -100,7 +104,7 @@ function askUserName() {
     usernameForm.addEventListener('submit', (e) => {
         e.preventDefault();
         var username = usernameInput.value;
-        if (username && username.length > 0 && username.length < 7) {
+        if (username && username.length > 0 && username.length < 10) {
             acceptUserNameAndStart(username);
         } else {
             usernameModal.querySelector("p").classList.remove("hidden");
