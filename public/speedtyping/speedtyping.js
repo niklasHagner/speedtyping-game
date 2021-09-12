@@ -80,10 +80,12 @@ function addMessage(text) {
 
 function askUserName() {
 
+    document.getElementById("chat-form").classList.add("hidden");
+    targetSentenceContainer.classList.add("hidden");
+
     var usernameModal = document.createElement("div");
     usernameModal.id = "username-modal";
     usernameModal.innerHTML = `
-        <h1>Keyboard Warrior</h1>
         <h2>Enter your name</h2>
         <form id="username-form">
             <input type="text" minlength="1" maxlength="8" tabindex="-1">
@@ -115,6 +117,8 @@ function askUserName() {
 
     function acceptUserNameAndStart(username) {
         socket.emit("username", username);
+        document.getElementById("chat-form").classList.remove("hidden");
+        targetSentenceContainer.classList.remove("hidden");
         usernameModal.classList.add("hidden");
         window.setTimeout(function () {
             usernameInput.removeAttribute("autofocus");
@@ -123,7 +127,7 @@ function askUserName() {
             chatForm.setAttribute("autofocus", "true");
         }, 1);
 
-        socket.emit("start_game", null);
+        socket.emit("new_player_ready", null);
     }
 }
 
@@ -146,7 +150,7 @@ socket.on("target_sentence", function (msg) {
     sentenceInProgressEl.innerText = "";
 });
 
-socket.on("avatar_move", function (data) {
+socket.on("show_players", function (data) {
     const playersHtml = data.players.map(x => `
         <div class="player-row">
             <span>${x.username}:</span>
@@ -159,6 +163,7 @@ socket.on("avatar_move", function (data) {
     racingTableEl.innerHTML = playersHtml.join("");
 });
 
-//---go---
+//Initial load
 askUserName();
+socket.emit("initial_client_site_load", null);
 

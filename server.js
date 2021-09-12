@@ -46,7 +46,7 @@ function socketConnectHandler(socket) {
 
         //update avatar list
         io.emit(
-            "avatar_move",
+            "show_players",
             {
                 players: playerManager.getPlayers()
             }
@@ -67,7 +67,7 @@ function socketConnectHandler(socket) {
         );
         //update avatar list
         io.emit(
-            "avatar_move",
+            "show_players",
             {
                 players: playerManager.getPlayers()
             }
@@ -95,12 +95,18 @@ function socketConnectHandler(socket) {
         game.movePlayer(io, username, message);
     });
 
-    socket.on("start_game", function(message) {
-        io.emit(
-            "chat_message",
-            `<div class="game-message"><icon>📜</icon> Starting game</div>`
-        );
+    socket.on("new_player_ready", function(message) {
         game.startNewMatch(io, message, socket);
+    });
+
+    socket.on("initial_client_site_load", function(message) {
+        //TODO: limit this to the single client, no need to emit it globally
+        io.emit(
+            "show_players",
+            {
+                players: playerManager.getPlayers()
+            }
+        )
     });
 }
 
