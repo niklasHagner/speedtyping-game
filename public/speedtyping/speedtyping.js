@@ -60,14 +60,6 @@ chatFormInput.addEventListener('input', () => {
 
 });
 
-// socket.on("chat_message", function (msg) {
-//     addMessage(msg);
-// });
-
-// socket.on("is_online", function (msg) {
-//     addMessage(msg);
-// });
-
 socket.on("highscore", function (msg) {
     document.querySelector("#highscore").innerHTML = msg;
 });
@@ -162,6 +154,28 @@ socket.on("show_players", function (data) {
     `)
     racingTableEl.innerHTML = playersHtml.join("");
 });
+
+function resetStuffBeforeNewGame() {
+    chatForm.classList.remove("hidden");
+    const matchCompletedScreen = document.querySelector("match-completed-screen");
+    if (matchCompletedScreen) matchCompletedScreen.remove();
+}
+
+socket.on("player_finished", function (playerData) {
+    chatForm.classList.add("hidden");
+    let newEl = document.createElement("div");
+    newEl.id = "match-completed-screen";
+    newEl.innerHTML = `
+        <h2>Good job! 👍</h2>
+        <p>WPM:${playerData.wordsPerMinute}</p>
+        <button onclick="clickStartNewGame">New game</button>
+    `;
+    chatForm.parentNode.insertBefore(newEl, chatForm);
+});
+
+function clickStartNewGame() {
+    
+}
 
 //Initial load
 askUserName();

@@ -141,7 +141,7 @@ button {
     border: solid 3px crimson;
 }
 
-/* start hack to remove spacing between spans*/
+/* hack to remove spacing between spans*/
 #word-matching-area {
     font-size: 0; 
 }

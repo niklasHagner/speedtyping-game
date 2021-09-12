@@ -78,7 +78,7 @@ function socketConnectHandler(socket) {
         var username = socket.username;
         const player = playerManager.getPlayerByName(username);
         if (!player) {
-            console.log("player missing for", username);
+            console.error("player missing for", username);
             return;
         }
         console.log(player, message);
@@ -92,7 +92,7 @@ function socketConnectHandler(socket) {
 
     socket.on("player_move", function(message) {
         var username = socket.username;
-        game.movePlayer(io, username, message);
+        game.movePlayer(io, username, message, socket.id);
     });
 
     socket.on("new_player_ready", function(message) {

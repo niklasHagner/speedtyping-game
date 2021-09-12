@@ -136,7 +136,7 @@ button {
     border: solid 3px crimson;
 }
 
-/* start hack to remove spacing between spans*/
+/* hack to remove spacing between spans*/
 #word-matching-area {
     padding: 50px;
     font-size: 0; 
@@ -190,4 +190,9 @@ span#sentence-in-progress:after {
     left: 0px;
     width: 26px;
     height: 26px;
+}
+
+#match-completed-screen {
+    text-align: center;
+    padding: 10px;
 }
