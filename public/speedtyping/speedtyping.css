@@ -196,11 +196,13 @@ span#sentence-in-progress:after {
     height: 50px;
     border: solid 1px #ccc;
     text-align: center;
+    direction: rtl;
 }
 .player-row .avatar-row {
     position: relative;
     width: calc(100% - 26px);
     height: 26px;
+    direction: rtl;
 }
 .player-row icon {
     position: absolute;
@@ -212,4 +214,12 @@ span#sentence-in-progress:after {
 #match-completed-screen {
     text-align: center;
     padding: 10px;
+}
+
+#server-message {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: gold;
+    color: black;
 }

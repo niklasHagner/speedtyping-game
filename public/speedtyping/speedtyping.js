@@ -1,4 +1,3 @@
-
 const prodMode = false;
 const url = window.location.href;
 var socket = io.connect(url);
@@ -9,7 +8,7 @@ var targetSentenceContainer = document.getElementById("word-matching-area");
 var sentenceInProgressEl = document.getElementById("sentence-in-progress");
 var sentenceRemainingEl = document.getElementById("sentence-remaining");
 var racingTableEl = document.getElementById("racing-table");
-
+var serverMessage = document.getElementById("server-message");
 
 const GAME = {
     totalTargetText: "",
@@ -23,8 +22,6 @@ const GAME = {
 
 chatFormInput.addEventListener('input', () => {
     var input = chatFormInput.value;
-
-
     
     if (GAME.nextWordTarget.indexOf(input) !==0 ) {
         GAME.incorrectInput = input;
@@ -36,7 +33,7 @@ chatFormInput.addEventListener('input', () => {
         GAME.correctInCurrentWord = input;
         GAME.totalCorrect = GAME.correctOldWords + GAME.correctInCurrentWord;
         sentenceInProgressEl.innerText = GAME.totalCorrect;
-        console.log("correct so far:", GAME.correctInCurrentWord, "remaining:", GAME.remainingTargetText, GAME.remainingTargetTextSplit);
+        // console.log("correct so far:", GAME.correctInCurrentWord, "remaining:", GAME.remainingTargetText, GAME.remainingTargetTextSplit);
         GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length)
         sentenceRemainingEl.innerText = GAME.remainingTargetText;
     }
@@ -46,10 +43,6 @@ chatFormInput.addEventListener('input', () => {
         GAME.correctOldWords += GAME.totalTargetTextSplit[0];
         GAME.totalTargetTextSplit.shift();
         GAME.nextWordTarget = GAME.totalTargetTextSplit[0];
-        console.log("2 correct so far:", GAME.correctInCurrentWord, "remaining:", GAME.remainingTargetText, GAME.remainingTargetTextSplit);
-
-        // GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length)
-        // sentenceRemainingEl.innerText = GAME.remainingTargetText;
     } 
 
     if (GAME.incorrectInput.length > 0) {
@@ -58,14 +51,21 @@ chatFormInput.addEventListener('input', () => {
         chatForm.classList.remove("error");
     }
 
-    if (GAME.totalTargetText === GAME.totalCorrect) {
-        socket.emit("chat_message", GAME.totalCorrect);
-    }
-
 });
 
-socket.on("highscore", function (msg) {
-    document.querySelector("#highscore").innerHTML = msg;
+let lastMessageTime;
+socket.on("server_message", function (msg) {
+    serverMessage.innerHTML = msg;
+    serverMessage.classList.remove("hidden");
+    lastMessageTime =  new Date();
+    window.setTimeout(() => {
+        var nowTime = new Date().getTime();
+        const diff = lastMessageTime && nowTime - lastMessageTime.getTime();
+        console.log("diff", diff);
+        if (diff > 1100) {
+            serverMessage.classList.add("hidden");
+        }
+    }, 1500);
 });
 
 function addMessage(text) {
@@ -112,18 +112,13 @@ function askUserName() {
     });
 
     function acceptUserNameAndStart(username) {
-        socket.emit("username", username);
+        socket.emit("new_player_with_username_joined", username);
         document.getElementById("chat-form").classList.remove("hidden");
         targetSentenceContainer.classList.remove("hidden");
         usernameModal.classList.add("hidden");
         window.setTimeout(function () {
-            // usernameInput.removeAttribute("autofocus");
-            // document.querySelector("#username-form").blur();
             chatFormInput.focus();
-            // chatForm.setAttribute("autofocus", "true");
         }, 1);
-
-        socket.emit("new_player_ready", null);
     }
 }
 
@@ -144,6 +139,7 @@ socket.on("target_sentence", function (msg) {
 
     sentenceRemainingEl.innerText = msg;
     sentenceInProgressEl.innerText = "";
+    resetStuffBeforeNewGame();
 });
 
 socket.on("show_players", function (data) {
@@ -152,18 +148,12 @@ socket.on("show_players", function (data) {
             <span>${x.username}:</span>
             <span class="score">${x.wordsPerMinute} wpm</span>
             <div class="avatar-row">
-                <icon style="left: ${x.percentageOfString_int}%">${x.avatar}</icon>
+                <icon style="right: ${x.percentageOfString_int}%">${x.avatar}</icon>
             </div>
         </div>
     `)
     racingTableEl.innerHTML = playersHtml.join("");
 });
-
-function resetStuffBeforeNewGame() {
-    chatForm.classList.remove("hidden");
-    const matchCompletedScreen = document.querySelector("match-completed-screen");
-    if (matchCompletedScreen) matchCompletedScreen.remove();
-}
 
 socket.on("player_finished", function (playerData) {
     chatForm.classList.add("hidden");
@@ -171,15 +161,23 @@ socket.on("player_finished", function (playerData) {
     newEl.id = "match-completed-screen";
     newEl.innerHTML = `
         <h2>Good job! 👍</h2>
-        <p>WPM:${playerData.wordsPerMinute}</p>
-        <button onclick="clickStartNewGame">New game</button>
+        <p>Words per minute:${playerData.wordsPerMinute}</p>
+        <p>Chars written:${playerData.charsSoFar}</p>
+        <p>Chars per minute:${playerData.charsPerMinute}</p>
+        <button onclick="clickStartNewGame()">New game</button>
     `;
     let footer = document.querySelector("footer");
     footer.parentNode.insertBefore(newEl, footer);
 });
 
 function clickStartNewGame() {
-    
+    socket.emit("start_new_game", null);
+}
+
+function resetStuffBeforeNewGame() {
+    chatForm.classList.remove("hidden");
+    const matchCompletedScreen = document.querySelector("#match-completed-screen");
+    if (matchCompletedScreen) matchCompletedScreen.remove();
 }
 
 //Initial load
