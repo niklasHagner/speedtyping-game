@@ -1,6 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Carter+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Roboto+Slab:wght@700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
+
 
 * {
     margin: 0;
@@ -12,14 +12,13 @@ body {
     background-color: black;
     color: #2BD2AA;
     font-size: 30px;
-    /* font-family: 'VT323', monospace; */
+    font-family: 'Courier Prime', monospace;
 }
 
 body, 
 button, 
 input {
-    font-family: monospace;
-    /* font-family: 'VT323', monospace; */
+    font-family: 'Courier Prime', monospace;
 }
 
 button {
@@ -36,17 +35,32 @@ header {
     left: 0;
     padding: 10px;
     text-align: center;
-    font-family: 'VT323', monospace;
     font-size: 16px;
     background-color: black;
     color: #37E6CA;
     border-bottom: solid 4px #37E6CA;
+    font-family: 'Courier Prime', monospace;
 }
 header h1 {
-    font-family: 'Oswald', sans-serif;
-    text-transform: uppercase;
+    font-family: Courgette, sans-serif;
     font-size: 40px;
-    color: #FC574D;
+    margin-bottom: 10px;
+}
+
+footer {
+    padding: 40px;
+    font-size: small;
+    text-align: center;
+}
+
+h1 {
+    font-size: 40px;
+}
+h2 {
+    font-size: 35px;
+}
+h3 {
+    font-size: 30px;
 }
 
 input {
@@ -125,7 +139,6 @@ button {
 
 #username-modal {
     background-color: #222;
-    color: #D54940;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -187,10 +200,10 @@ span#sentence-in-progress:after {
 .player-row .avatar-row {
     position: relative;
     width: calc(100% - 26px);
+    height: 26px;
 }
 .player-row icon {
     position: absolute;
-    top: 10px;
     left: 0px;
     width: 26px;
     height: 26px;

@@ -174,7 +174,8 @@ socket.on("player_finished", function (playerData) {
         <p>WPM:${playerData.wordsPerMinute}</p>
         <button onclick="clickStartNewGame">New game</button>
     `;
-    chatForm.parentNode.insertBefore(newEl, chatForm);
+    let footer = document.querySelector("footer");
+    footer.parentNode.insertBefore(newEl, footer);
 });
 
 function clickStartNewGame() {
