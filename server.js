@@ -54,17 +54,24 @@ function socketConnectHandler(socket) {
         
     });
 
-    socket.on("disconnect", function(username) {
+    socket.on("disconnect", function() {
+        const username = socket.username;
         const player = playerManager.getPlayerByName(username);
         if (!player) {
-            console.error("player disconnected:", username);
             return;
         }
-        playerManager.leave(username);
+        playerManager.playerLeavesGame(username);
         io.emit(
             "is_online",
             `🏃<div class="game-message game-message--join"><span class="username">${username}</span> left the chat..</i> <icon>${player.avatar}</icon></div>`
         );
+        //update avatar list
+        io.emit(
+            "avatar_move",
+            {
+                players: playerManager.getPlayers()
+            }
+        )
     });
 
     socket.on("chat_message", function(message) {
