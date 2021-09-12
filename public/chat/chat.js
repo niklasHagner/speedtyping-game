@@ -45,7 +45,7 @@ function askUserName() {
     var usernameModal = document.createElement("div");
     usernameModal.id = "username-modal";
     usernameModal.innerHTML = `
-        <h1>Keyboard Warrior</h1>
+        <h1>Chat</h1>
         <h2>Enter your name</h2>
         <form id="username-form">
             <input type="text" minlength="1" maxlength="10" tabindex="-1">

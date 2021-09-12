@@ -94,11 +94,11 @@ function askUserName() {
     var usernameForm = document.querySelector("#username-form");
     var usernameInput = usernameForm.querySelector("input");
     window.setTimeout(function () {
-        document.querySelector("#username-form").focus();
+        usernameInput.focus();
     }, 1);
 
-    //test
-    usernameInput.value = "hagge";
+    //Speed up development with a preset username
+    usernameInput.value = "Bob";
     
 
     usernameForm.addEventListener('submit', (e) => {
@@ -117,10 +117,10 @@ function askUserName() {
         targetSentenceContainer.classList.remove("hidden");
         usernameModal.classList.add("hidden");
         window.setTimeout(function () {
-            usernameInput.removeAttribute("autofocus");
-            document.querySelector("#username-form").blur();
-            chatForm.focus();
-            chatForm.setAttribute("autofocus", "true");
+            // usernameInput.removeAttribute("autofocus");
+            // document.querySelector("#username-form").blur();
+            chatFormInput.focus();
+            // chatForm.setAttribute("autofocus", "true");
         }, 1);
 
         socket.emit("new_player_ready", null);
