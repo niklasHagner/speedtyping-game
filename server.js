@@ -43,7 +43,7 @@ function socketConnectHandler(socket) {
 
     function giveStartButtonToSomePlayer() {
         const players = playerManager.getPlayers();
-        const canStartGame = players.length < 2;
+        const canStartGame = players.length >= 1; //allow solo games 
         if (canStartGame) {
             return;
         }
