@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Speed Type</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="icon" href="favicon/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="speedtyping/speedtyping.css">
-    <script src="../../socket.io/socket.io.js"></script>
-    <style>
-      .hidden { display: none !important; }
-    </style>
-  </head>
-  <body>
+
+<head>
+  <title>Speed Type</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="favicon/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="speedtyping/speedtyping.css">
+  <script src="../../socket.io/socket.io.js"></script>
+  <style>
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
     <header>
       <h1>Speed Type</h1>
-      
+
       <section div="racing-wrap">
         <div id="racing-table"></div>
       </section>
@@ -25,14 +30,17 @@
       <div id="word-matching-area">
         <span id="sentence-in-progress"></span><span id="sentence-remaining"></span>
       </div>
-  
+
       <form id="chat-form">
         <input id="chat-input" autocomplete="off" spellcheck="false" tabindex="-1">
       </form>
     </main>
-    <footer>
-      Hagge 2021
-    </footer>
-    <script src="speedtyping//speedtyping.js"></script>
-  </body>
-</html> 
+    <div class="footer-pusher"></div>
+  </div>
+  <footer>
+    Hagge ™
+  </footer>
+  <script src="speedtyping//speedtyping.js"></script>
+</body>
+
+</html>

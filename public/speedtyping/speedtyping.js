@@ -91,7 +91,7 @@ function askUserName() {
         <p class="hidden">Names have to be 1 to 10 chars</p>
     `;
 
-    document.body.append(usernameModal);
+    document.querySelector("main").append(usernameModal);
     var usernameForm = document.querySelector("#username-form");
     var usernameInput = usernameForm.querySelector("input");
     window.setTimeout(function () {
