@@ -9,6 +9,7 @@ var sentenceInProgressEl = document.getElementById("sentence-in-progress");
 var sentenceRemainingEl = document.getElementById("sentence-remaining");
 var racingTableEl = document.getElementById("racing-table");
 var serverMessage = document.getElementById("server-message");
+var newGameDiv = document.getElementById("new-game-div");
 
 const GAME = {
     totalTargetText: "",
@@ -187,7 +188,6 @@ function resetStuffAsNewSenteceAppears(msg) {
 
     sentenceRemainingEl.innerText = msg;
     sentenceInProgressEl.innerText = "";
-    // resetStuffBeforeNewGame();
     chatFormInput.focus();
     const matchCompletedScreen = document.querySelector("#match-completed-screen");
     if (matchCompletedScreen) matchCompletedScreen.remove();
@@ -196,10 +196,7 @@ function resetStuffAsNewSenteceAppears(msg) {
 socket.on("allow_player_to_start_new_game", giveFirstPlayerStartButton);
 
 function giveFirstPlayerStartButton() {
-    let newEl = document.createElement("div");
-    newEl.id = "new-game-div";
-    newEl.innerHTML =  `<button onclick="clickStartNewGame()">New game</button>`;
-    document.querySelector("header").append(newEl);
+    newGameDiv.innerHTML =  `<button onclick="clickStartNewGame()">New game</button>`;
 }
 
 //Initial load
