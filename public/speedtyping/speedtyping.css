@@ -216,10 +216,13 @@ span#sentence-in-progress:after {
     padding: 10px;
 }
 
+main {
+    position: relative;
+}
 #server-message {
     position: absolute;
     top: 0;
-    right: 0;
+    left: 40%;
     background-color: gold;
     color: black;
 }

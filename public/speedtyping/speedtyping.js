@@ -139,7 +139,8 @@ socket.on("target_sentence", function (msg) {
 
     sentenceRemainingEl.innerText = msg;
     sentenceInProgressEl.innerText = "";
-    resetStuffBeforeNewGame();
+    // resetStuffBeforeNewGame();
+    chatFormInput.focus();
 });
 
 socket.on("show_players", function (data) {
@@ -160,7 +161,7 @@ socket.on("player_finished", function (playerData) {
     let newEl = document.createElement("div");
     newEl.id = "match-completed-screen";
     newEl.innerHTML = `
-        <h2>Good job! 👍</h2>
+        <h2>👍</h2>
         <p>Words per minute:${playerData.wordsPerMinute}</p>
         <p>Chars written:${playerData.charsSoFar}</p>
         <p>Chars per minute:${playerData.charsPerMinute}</p>
@@ -172,6 +173,7 @@ socket.on("player_finished", function (playerData) {
 
 function clickStartNewGame() {
     socket.emit("start_new_game", null);
+    resetStuffBeforeNewGame();
 }
 
 function resetStuffBeforeNewGame() {
