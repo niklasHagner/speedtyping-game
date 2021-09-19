@@ -122,27 +122,6 @@ function askUserName() {
     }
 }
 
-socket.on("target_sentence", function (msg) {
-    GAME.incorrectInput = ""
-    GAME.correctInCurrentWord = ""
-    GAME.correctOldWords = ""
-    GAME.totalTargetText = msg;
-    GAME.remainingTargetText = GAME.totalTargetText;
-    const split = GAME.remainingTargetText.split(" ");
-    let i = split.length -1;
-    do {
-        split.splice(i, 0, " ");
-    } while (i-- && i > 0)
-
-    GAME.totalTargetTextSplit = split;
-    GAME.nextWordTarget = split[0];
-
-    sentenceRemainingEl.innerText = msg;
-    sentenceInProgressEl.innerText = "";
-    // resetStuffBeforeNewGame();
-    chatFormInput.focus();
-});
-
 socket.on("show_players", function (data) {
     const playersHtml = data.players.map(x => `
         <div class="player-row">
@@ -171,15 +150,56 @@ socket.on("player_finished", function (playerData) {
     footer.parentNode.insertBefore(newEl, footer);
 });
 
-function clickStartNewGame() {
+function clickStartNewGame(e) {
     socket.emit("start_new_game", null);
     resetStuffBeforeNewGame();
+    const btn = e.target;
+    if (btn) {
+        btn.remove();
+    }
 }
 
 function resetStuffBeforeNewGame() {
     chatForm.classList.remove("hidden");
     const matchCompletedScreen = document.querySelector("#match-completed-screen");
     if (matchCompletedScreen) matchCompletedScreen.remove();
+
+    const firstPlayerNewGameEl = document.querySelector("#new-game-div");
+    if (firstPlayerNewGameEl) firstPlayerNewGameEl.remove();
+}
+
+socket.on("target_sentence", resetStuffAsNewSenteceAppears);
+
+function resetStuffAsNewSenteceAppears(msg) {
+    GAME.incorrectInput = ""
+    GAME.correctInCurrentWord = ""
+    GAME.correctOldWords = ""
+    GAME.totalTargetText = msg;
+    GAME.remainingTargetText = GAME.totalTargetText;
+    const split = GAME.remainingTargetText.split(" ");
+    let i = split.length -1;
+    do {
+        split.splice(i, 0, " ");
+    } while (i-- && i > 0)
+
+    GAME.totalTargetTextSplit = split;
+    GAME.nextWordTarget = split[0];
+
+    sentenceRemainingEl.innerText = msg;
+    sentenceInProgressEl.innerText = "";
+    // resetStuffBeforeNewGame();
+    chatFormInput.focus();
+    const matchCompletedScreen = document.querySelector("#match-completed-screen");
+    if (matchCompletedScreen) matchCompletedScreen.remove();
+}
+
+socket.on("allow_player_to_start_new_game", giveFirstPlayerStartButton);
+
+function giveFirstPlayerStartButton() {
+    let newEl = document.createElement("div");
+    newEl.id = "new-game-div";
+    newEl.innerHTML =  `<button onclick="clickStartNewGame()">New game</button>`;
+    document.querySelector("header").append(newEl);
 }
 
 //Initial load

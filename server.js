@@ -23,11 +23,12 @@ const io = socketio.listen(http);
 
 io.sockets.on("connection", socketConnectHandler);
 
+let startButtonSentToPlayerSocketId;
 
 function socketConnectHandler(socket) {
     socket.on("new_player_with_username_joined", function(username) {
         socket.username = username;
-        const player = playerManager.setUpNewPlayer(username);
+        const player = playerManager.setUpNewPlayer(socket);
         io.emit(
             "is_online",
             `<div class="game-message game-message--join"><icon>${player.avatar}</icon> <span class="username">${player.username}</span> joined the chat..</div>`
@@ -35,8 +36,26 @@ function socketConnectHandler(socket) {
 
         io.emit("show_players", { players: playerManager.getPlayers() })
 
-        game.considerStartingGame(io);
+        giveStartButtonToSomePlayer();
+
+        // game.considerStartingGame(io);
     });
+
+    function giveStartButtonToSomePlayer() {
+        const players = playerManager.getPlayers();
+        const canStartGame = players.length < 2;
+        if (canStartGame) {
+            return;
+        }
+        const firstPlayerSocketId = players[0].socketId;
+        const messageAlreadySent = firstPlayerSocketId === startButtonSentToPlayerSocketId;
+        if (messageAlreadySent) {
+            return;
+        }
+        console.log("Giving NewGame button to", firstPlayerSocketId);
+        io.to(firstPlayerSocketId).emit("allow_player_to_start_new_game", null);
+        startButtonSentToPlayerSocketId = firstPlayerSocketId;
+    }
 
     socket.on("disconnect", function() {
         const username = socket.username;
@@ -50,6 +69,8 @@ function socketConnectHandler(socket) {
             `🏃<div class="game-message game-message--join"><span class="username">${username}</span> left the chat..</i> <icon>${player.avatar}</icon></div>`
         );
         io.emit("show_players", { players: playerManager.getPlayers() })
+
+        giveStartButtonToSomePlayer();
     });
 
     socket.on("player_move", function(message) {
