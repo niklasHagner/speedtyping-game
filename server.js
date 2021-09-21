@@ -5,7 +5,15 @@ var path = require("path");
 var game = require("./lib/game.js");
 var playerManager = require("./lib/playerManager.js");
 const socketio = require("socket.io");
+
+app.use(function (req, res, next) {
+    console.log("req.url:", req.url);
+    console.info("HEADERS:");
+    console.info(JSON.stringify(req.headers))
+    next();
+});
 app.use(express.static("public"));
+
 
 //var port = (process && process.env && process.env.PORT) ? Number(process.env.PORT) : 9001;
 //"http://localhost:" + port
