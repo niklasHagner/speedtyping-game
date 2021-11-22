@@ -236,7 +236,9 @@ main {
 #server-message {
     position: absolute;
     top: 0;
-    left: 40%;
+    left: 0;
+    width: 100%;
+    text-align: center;
     background-color: gold;
     color: black;
 }
