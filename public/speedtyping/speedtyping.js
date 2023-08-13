@@ -34,14 +34,14 @@ const GAME = {
 let lastMessageTime;
 socket.on("server_message", function (msg) {
   serverMessage.innerHTML = msg;
-  serverMessage.classList.remove("hidden");
+  serverMessage.classList.remove("hidden--animated");
   lastMessageTime = new Date();
   window.setTimeout(() => {
     const nowTime = new Date().getTime();
     const diff = lastMessageTime && nowTime - lastMessageTime.getTime();
     console.log("diff", diff);
     if (diff > 1100) {
-      serverMessage.classList.add("hidden");
+      serverMessage.classList.add("hidden--animated");
     }
   }, 1500);
 });
@@ -124,8 +124,6 @@ function askUserName() {
   function acceptUserNameAndStart(username) {
     GAME.username = username;
     socket.emit("new_player_with_username_joined", username);
-    // document.getElementById("chat-form").classList.remove("hidden");
-    // targetSentenceContainer.classList.remove("hidden");
     usernameModal.classList.add("hidden");
     window.setTimeout(function () {
       chatFormInput.focus();
@@ -179,8 +177,7 @@ function clickStartNewGame(e) {
 function resetStuffBeforeNewGame() {
   setGameState("unstarted");
   document.body.classList.remove("game-state--match-completed");
-
-  targetSentenceContainer.classList.remove("hidden");
+  targetSentenceContainer.classList.add("hidden");
   chatForm.classList.remove("hidden");
   const matchCompletedScreen = document.querySelector("#match-completed-screen");
   if (matchCompletedScreen) matchCompletedScreen.remove();
@@ -219,6 +216,7 @@ function newTargetSentenceAppears(msg) {
   if (matchCompletedScreen) matchCompletedScreen.remove();
 
   document.body.classList.remove("game-state--match-completed");
+  targetSentenceContainer.classList.remove("hidden");
 }
 
 function giveFirstPlayerStartButton() {
