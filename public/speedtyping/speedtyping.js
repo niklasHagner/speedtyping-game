@@ -159,8 +159,10 @@ chatFormInput.addEventListener('input', () => {
 
   if (GAME.incorrectInput.length > 0) {
     chatForm.classList.add("error");
+    sentenceInProgressEl.classList.add("error");
   } else {
     chatForm.classList.remove("error");
+    sentenceInProgressEl.classList.remove("error");
   }
 });
 

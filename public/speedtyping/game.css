@@ -100,6 +100,11 @@ span#sentence-in-progress:after {
     right: -7px;
 }
 
+span#sentence-in-progress.error,
+span#sentence-in-progress.error:after {
+  color: crimson;
+}
+
 .score {
     color:gold;
 }
