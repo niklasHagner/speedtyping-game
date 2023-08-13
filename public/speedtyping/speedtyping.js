@@ -170,6 +170,7 @@ chatFormInput.addEventListener('input', () => {
 function clickStartNewGame(e) {
   socket.emit("start_new_game", null);
   console.log("Emit 'start_new_game'");
+  resetStuffBeforeNewGame();
   if (e.target) {
     e.target.remove();
   }
