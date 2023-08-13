@@ -46,7 +46,8 @@ socket.on("server_message", function (msg) {
   }, 1500);
 });
 
-socket.on("target_sentence", resetStuffAsNewSenteceAppears);
+socket.on("prep_new_match", resetStuffBeforeNewGame);
+socket.on("target_sentence", newTargetSentenceAppears);
 socket.on("allow_player_to_start_new_game", giveFirstPlayerStartButton);
 
 socket.on("show_players", function (data) {
@@ -168,11 +169,7 @@ chatFormInput.addEventListener('input', () => {
 //--- Helpers ---
 function clickStartNewGame(e) {
   socket.emit("start_new_game", null);
-  console.log("start_new_game");
-  targetSentenceContainer.classList.remove("hidden");
-  chatForm.classList.remove("hidden");
-
-  resetStuffBeforeNewGame();
+  console.log("Emit 'start_new_game'");
   if (e.target) {
     e.target.remove();
   }
@@ -182,6 +179,7 @@ function resetStuffBeforeNewGame() {
   setGameState("unstarted");
   document.body.classList.remove("game-state--match-completed");
 
+  targetSentenceContainer.classList.remove("hidden");
   chatForm.classList.remove("hidden");
   const matchCompletedScreen = document.querySelector("#match-completed-screen");
   if (matchCompletedScreen) matchCompletedScreen.remove();
@@ -197,7 +195,7 @@ function setGameState(stateName) {
   if (found) found.active = true;
 }
 
-function resetStuffAsNewSenteceAppears(msg) {
+function newTargetSentenceAppears(msg) {
   setGameState("started");
   GAME.incorrectInput = ""
   GAME.correctInCurrentWord = ""
