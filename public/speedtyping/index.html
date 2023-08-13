@@ -1,46 +1,87 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Speed Type</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" href="favicon/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="speedtyping/base.css">
+    <link rel="stylesheet" type="text/css" href="speedtyping/game.css">
+    <script src="../../socket.io/socket.io.js"></script>
+    <style>
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
 
-<head>
-  <title>Speed Type</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" href="favicon/favicon.ico" />
-  <link rel="stylesheet" type="text/css" href="speedtyping/speedtyping.css">
-  <script src="../../socket.io/socket.io.js"></script>
-  <style>
-    .hidden {
-      display: none !important;
-    }
-  </style>
-</head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <div id="retro-logo-wrapper">
+          <svg id=sun version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur id="glowfeGaussianBlur" stdDeviation="5.1" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            </defs>
+            <linearGradient id="outrun_grad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#fde80d" />
+              <stop offset="18%" stop-color="#fcd119" />
+              <stop offset="33%" stop-color="#f9a92f" />
+              <stop offset="48%" stop-color="#f68145" />
+              <stop offset="63%" stop-color="#f24069" />
+              <stop offset="76%" stop-color="#ef1c7d" />
+              <stop offset="91%" stop-color="#ed008c" />
+              <stop offset="100%" stop-color="#ed008c" />
+            </linearGradient>
+            </defs>
+            <clipPath id="outrun">
+              <rect x="0" y="0" width="200" height="60" />
+              <rect x="0" y="62.5" width="200" height="10" />
+              <rect x="0" y="76" width="200" height="10" />
+              <rect x="0" y="91" width="200" height="10" />
+              <rect x="0" y="107" width="200" height="9.5" />
+              <rect x="0" y="124" width="200" height="9" />
+              <rect x="0" y="140" width="200" height="8.5" />
+              <rect x="0" y="155" width="200" height="8" />
+              <rect x="0" y="170" width="200" height="7.5" />
+            </clipPath>
 
-<body>
-  <div class="wrapper">
-    <header>
-      <h1>Speed Type</h1>
+            <circle cx="100" cy="100" r="100" clip-path="url(#outrun)" fill=url(#outrun_grad) filter=url(#glow) />
+          </svg>
+          <h1 class="glow">SPEED TYPER</h1>
+        </div>
+      </header>
 
-      <section div="racing-wrap">
+      <section id="game-status">
         <div id="racing-table"></div>
       </section>
-      <div id="new-game-div"></div>
-    </header>
-    <main id="main">
-      <div id="server-message"></div>
-      <div id="word-matching-area">
-        <span id="sentence-in-progress"></span><span id="sentence-remaining"></span>
+
+      <div id="lobby">
+        <div id="new-game-button-container"></div>
       </div>
 
-      <form id="chat-form">
-        <input id="chat-input" autocomplete="off" spellcheck="false" tabindex="-1">
-      </form>
-    </main>
-    <div class="footer-pusher"></div>
-  </div>
-  <footer>
-    Hagge ™
-  </footer>
-  <script src="speedtyping//speedtyping.js"></script>
-</body>
+      <main id="main">
+        <div id="server-message"></div>
+        <div id="word-matching-area" class="hidden">
+          <span id="sentence-in-progress"></span><span id="sentence-remaining"></span>
+        </div>
+
+        <form id="chat-form" class="hidden">
+          <input id="chat-input" autocomplete="off" spellcheck="false" tabindex="-1">
+        </form>
+      </main>
+      <div class="footer-pusher"></div>
+    </div>
+    <footer>
+      Hagge ™
+    </footer>
+    <script src="speedtyping/speedtyping.js" type="module"></script>
+    <script src="speedtyping/firstNames.js" type="module"></script>
+  </body>
 
 </html>

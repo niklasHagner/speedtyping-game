@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Roboto+Slab:wght@700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Audiowide');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  color: #f02a77;
+  font-size: 30px;
+  font-family: 'Courier Prime', monospace;
+  background: #070829;
+  background: linear-gradient(to bottom, #070829 0%, #05092b 24%, #08092b 25%, #08092d 30%, #050a2b 32%, #070a2e 35%, #080e31 56%, #090f35 62%, #080f32 63%, #0b1036 64%, #0b0f36 69%, #0a1237 70%, #091136 73%, #0b173f 91%) fixed;
+}
+
+body,
+button,
+input {
+  font-family: 'Courier Prime', monospace;
+}
+
+button {
+  cursor: pointer;
+  background: #f8993b;
+  color: black;
+  border: none;
+  padding: 10px;
+  margin: 0 5px;
+  font-size: 30px;
+}
+
+button,
+input {
+  border: solid 3px;
+}
+
+main {
+  position: relative;
+}
+
+
+footer,
+.footer-pusher {
+  height: 50px;
+  padding: 20px;
+  font-size: small;
+  text-align: center;
+}
+
+h1 {
+  font-size: 40px;
+}
+
+h2 {
+  font-size: 35px;
+}
+
+h3 {
+  font-size: 30px;
+}
+
+input {
+  font-size: 30px;
+  outline: solid 1px #f02a77;
+  background: black;
+  color: #f8993b;
+}
+
+
+header {
+  position: static;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  text-align: center;
+  font-size: 16px;
+  color: #f8993b;
+  border-bottom: solid 4px #f8993b;
+  font-family: 'Courier Prime', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+header h1 {
+  font-size: 40px;
+  font-family: 'Audiowide', cursive;
+  font-weight: bold;
+  color: #FF073A;
+  text-align: center;
+  margin: 0 auto;
+}
+
+header svg {
+  margin: 0 auto;
+  height: 200px;
+}
+
+.glow {
+  filter: url(#glow);
+  -webkit-filter: url(#glow);
+  -moz-filter: url(#glow);
+  -o-filter: url(#blurFilter);
+  -ms-filter: url(#glow);
+}

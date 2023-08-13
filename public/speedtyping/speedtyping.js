@@ -1,16 +1,19 @@
-const prodMode = false;
-const url = window.location.href;
-var socket = io.connect(url);
-var chatForm = document.getElementById("chat-form");
-var chatFormInput = document.getElementById("chat-input");
-var messageContainer = document.getElementById("messages");
-var targetSentenceContainer = document.getElementById("word-matching-area");
-var sentenceInProgressEl = document.getElementById("sentence-in-progress");
-var sentenceRemainingEl = document.getElementById("sentence-remaining");
-var racingTableEl = document.getElementById("racing-table");
-var serverMessage = document.getElementById("server-message");
-var newGameDiv = document.getElementById("new-game-div");
+import { getRandomName } from "./firstNames.js";
 
+// DOM elements
+const chatForm = document.getElementById("chat-form");
+const chatFormInput = document.getElementById("chat-input");
+const messageContainer = document.getElementById("messages");
+const targetSentenceContainer = document.getElementById("word-matching-area");
+const sentenceInProgressEl = document.getElementById("sentence-in-progress");
+const sentenceRemainingEl = document.getElementById("sentence-remaining");
+const racingTableEl = document.getElementById("racing-table");
+const serverMessage = document.getElementById("server-message");
+const newGameButtonContainer = document.getElementById("new-game-button-container");
+
+// Game state
+const url = window.location.href;
+const socket = io.connect(url);
 const GAME = {
     totalTargetText: "",
     nextWordTarget: "",
@@ -22,7 +25,7 @@ const GAME = {
 }
 
 chatFormInput.addEventListener('input', () => {
-    var input = chatFormInput.value;
+    const input = chatFormInput.value;
     
     if (GAME.nextWordTarget.indexOf(input) !==0 ) {
         GAME.incorrectInput = input;
@@ -60,7 +63,7 @@ socket.on("server_message", function (msg) {
     serverMessage.classList.remove("hidden");
     lastMessageTime =  new Date();
     window.setTimeout(() => {
-        var nowTime = new Date().getTime();
+        const nowTime = new Date().getTime();
         const diff = lastMessageTime && nowTime - lastMessageTime.getTime();
         console.log("diff", diff);
         if (diff > 1100) {
@@ -76,11 +79,7 @@ function addMessage(text) {
 }
 
 function askUserName() {
-
-    document.getElementById("chat-form").classList.add("hidden");
-    targetSentenceContainer.classList.add("hidden");
-
-    var usernameModal = document.createElement("div");
+    const usernameModal = document.createElement("div");
     usernameModal.id = "username-modal";
     usernameModal.innerHTML = `
         <h2>Enter your name</h2>
@@ -92,19 +91,19 @@ function askUserName() {
     `;
 
     document.querySelector("main").append(usernameModal);
-    var usernameForm = document.querySelector("#username-form");
-    var usernameInput = usernameForm.querySelector("input");
+    const usernameForm = document.querySelector("#username-form");
+    const usernameInput = usernameForm.querySelector("input");
     window.setTimeout(function () {
         usernameInput.focus();
     }, 1);
 
     //Speed up development with a preset username
-    usernameInput.value = "Bob";
+    usernameInput.value = getRandomName();
     
 
     usernameForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        var username = usernameInput.value;
+        const username = usernameInput.value;
         if (username && username.length > 0 && username.length < 10) {
             acceptUserNameAndStart(username);
         } else {
@@ -114,8 +113,8 @@ function askUserName() {
 
     function acceptUserNameAndStart(username) {
         socket.emit("new_player_with_username_joined", username);
-        document.getElementById("chat-form").classList.remove("hidden");
-        targetSentenceContainer.classList.remove("hidden");
+        // document.getElementById("chat-form").classList.remove("hidden");
+        // targetSentenceContainer.classList.remove("hidden");
         usernameModal.classList.add("hidden");
         window.setTimeout(function () {
             chatFormInput.focus();
@@ -126,10 +125,12 @@ function askUserName() {
 socket.on("show_players", function (data) {
     const playersHtml = data.players.map(x => `
         <div class="player-row">
-            <span>${x.username}:</span>
-            <span class="score">${x.wordsPerMinute} wpm</span>
-            <div class="avatar-row">
-                <icon style="right: ${x.percentageOfString_int}%">${x.avatar}</icon>
+            <div class="player-">
+              <span>${x.username}:</span>
+              <span class="score">${x.wordsPerMinute} wpm</span>
+            </div>
+            <div class="avatar-track">
+                <icon style="left: ${x.percentageOfString_int}%">${x.avatar}</icon>
             </div>
         </div>
     `)
@@ -153,10 +154,13 @@ socket.on("player_finished", function (playerData) {
 
 function clickStartNewGame(e) {
     socket.emit("start_new_game", null);
+    console.log("start_new_game");
+    targetSentenceContainer.classList.remove("hidden");
+    chatForm.classList.remove("hidden");
+
     resetStuffBeforeNewGame();
-    const btn = e.target;
-    if (btn) {
-        btn.remove();
+    if (e.target) {
+      e.target.remove();
     }
 }
 
@@ -165,7 +169,7 @@ function resetStuffBeforeNewGame() {
     const matchCompletedScreen = document.querySelector("#match-completed-screen");
     if (matchCompletedScreen) matchCompletedScreen.remove();
 
-    const firstPlayerNewGameEl = document.querySelector("#new-game-div");
+    const firstPlayerNewGameEl = document.querySelector("#new-game-button-container");
     if (firstPlayerNewGameEl) firstPlayerNewGameEl.remove();
 }
 
@@ -196,7 +200,10 @@ function resetStuffAsNewSenteceAppears(msg) {
 socket.on("allow_player_to_start_new_game", giveFirstPlayerStartButton);
 
 function giveFirstPlayerStartButton() {
-    newGameDiv.innerHTML =  `<button onclick="clickStartNewGame()">New game</button>`;
+    const btn = document.createElement('button')
+    btn.innerText = "New game";
+    btn.addEventListener("click", clickStartNewGame);
+    newGameButtonContainer.appendChild(btn);
 }
 
 //Initial load

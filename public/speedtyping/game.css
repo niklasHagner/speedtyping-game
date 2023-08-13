@@ -1,87 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Roboto+Slab:wght@700&family=Share+Tech+Mono&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
-
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
-body {
-    background-color: black;
-    color: #2BD2AA;
-    font-size: 30px;
-    font-family: 'Courier Prime', monospace;
-}
-
-body, 
-button, 
-input {
-    font-family: 'Courier Prime', monospace;
-}
-
-button {
-    cursor: pointer;
-}
-
-button, input {
-    border: solid 3px;
-}
-
-header {
-    position: static;
-    top: 0;
-    left: 0;
-    padding: 10px;
-    text-align: center;
-    font-size: 16px;
-    background-color: black;
-    color: #37E6CA;
-    border-bottom: solid 4px #37E6CA;
-    font-family: 'Courier Prime', monospace;
-}
-header h1 {
-    font-family: Courgette, sans-serif;
-    font-size: 40px;
-    margin-bottom: 10px;
-}
-
-
-.wrapper {
-    min-height: 100%;
-    margin-bottom: -50px;
-}
-
-footer,
-.footer-pusher {
-    height: 50px;
-    padding: 20px;
-    font-size: small;
-    text-align: center;
-}
-
-h1 {
-    font-size: 40px;
-}
-h2 {
-    font-size: 35px;
-}
-h3 {
-    font-size: 30px;
-}
-
-input {
-    font-size: 30px;
-    outline: solid 1px #2BD2AA;
-    background: black;
-    color: #37E6CA;
-}
 
 .sentence-message {
     color: #C4C4C4;
@@ -100,15 +17,6 @@ input {
     width: 90%;
     max-width: 600px;
     text-align: center;
-}
-
-button {
-    background: #37E6CA;
-    color: black;
-    border: none;
-    padding: 10px;
-    margin: 0 5px;
-    font-size: 30px;
 }
 
 #chat-form button {
@@ -131,7 +39,7 @@ button {
 }
 
 .username {
-    background-color: #37E6CA;
+    background-color: #f8993b;
     color: #222;
     padding-left: 2px;
     padding-right: 2px;
@@ -142,7 +50,7 @@ button {
 }
 
 .game-message strong {
-    color: #2BD2AA;
+    color: #f02a77;
 }
 
 .target-sentence {
@@ -182,12 +90,12 @@ button {
 }
 
 #sentence-in-progress {
-    color: lime;
+    color: #fab529;
 }
 
 span#sentence-in-progress:after {
     content: "|";
-    color: lime;
+    color: #fab529;
     position: absolute;
     right: -7px;
 }
@@ -196,29 +104,36 @@ span#sentence-in-progress:after {
     color:gold;
 }
 
-#racing-wrap {
-    width: 100%;
-    text-align: right;
-    border: solid 1px red;
-    position: relative;
+#game-status {
+  background-color: rgba(50,50,50,0.5);
+  position: relative;
 }
 
-#racing-table .player-row {
+.player-row {
+    position: relative;
     display: block;
-    width: 100%;
+    width: calc(100% - 40px);
     height: 50px;
     border: solid 1px #ccc;
     text-align: center;
-    direction: rtl;
+    left: 20px;
 }
-.player-row .avatar-row {
-    position: relative;
+
+.player-data {
+  float: left;
+  font-size: 15px;
+}
+
+.player-row .avatar-track {
+    position: absolute;
+    top: 10px;
     width: calc(100% - 26px);
     height: 26px;
-    direction: rtl;
 }
+
 .player-row icon {
     position: absolute;
+    transform: scaleX(-1); /* flip. since most emojis face left and we want it to face right */
     left: 0px;
     width: 26px;
     height: 26px;
@@ -229,10 +144,6 @@ span#sentence-in-progress:after {
     padding: 10px;
 }
 
-main {
-    position: relative;
-}
-
 #server-message {
     position: absolute;
     top: 0;
@@ -241,4 +152,9 @@ main {
     text-align: center;
     background-color: gold;
     color: black;
+}
+
+#lobby {
+  text-align: center;
+  margin: 20px;
 }
