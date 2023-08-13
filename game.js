@@ -1,5 +1,5 @@
 const sentenceGenerator = require("txtgen");
-var stringSimilarity = require('string-similarity');
+var stringSimilarity = require("./lib/stringSimilarity.js");
 var playerManager = require("./playerManager.js");
 
 module.exports = {
