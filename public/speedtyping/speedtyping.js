@@ -11,7 +11,7 @@ const racingTableEl = document.getElementById("racing-table");
 const serverMessage = document.getElementById("server-message");
 const newGameButtonContainer = document.getElementById("new-game-button-container");
 
-// Game state
+//---Game state---
 const url = window.location.href;
 const socket = io.connect(url);
 const GAME = {
@@ -24,39 +24,7 @@ const GAME = {
     correctOldWords: ""
 }
 
-chatFormInput.addEventListener('input', () => {
-    const input = chatFormInput.value;
-    
-    if (GAME.nextWordTarget.indexOf(input) !==0 ) {
-        GAME.incorrectInput = input;
-    } else {
-        GAME.incorrectInput = "";
-    }
-
-    if (GAME.nextWordTarget.indexOf(input) === 0) {
-        GAME.correctInCurrentWord = input;
-        GAME.totalCorrect = GAME.correctOldWords + GAME.correctInCurrentWord;
-        sentenceInProgressEl.innerText = GAME.totalCorrect;
-        // console.log("correct so far:", GAME.correctInCurrentWord, "remaining:", GAME.remainingTargetText, GAME.remainingTargetTextSplit);
-        GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length)
-        sentenceRemainingEl.innerText = GAME.remainingTargetText;
-    }
-    if (GAME.nextWordTarget === input) {
-        socket.emit("player_move", input);
-        chatFormInput.value = "";
-        GAME.correctOldWords += GAME.totalTargetTextSplit[0];
-        GAME.totalTargetTextSplit.shift();
-        GAME.nextWordTarget = GAME.totalTargetTextSplit[0];
-    } 
-
-    if (GAME.incorrectInput.length > 0) {
-        chatForm.classList.add("error");
-    } else {
-        chatForm.classList.remove("error");
-    }
-
-});
-
+//---Socket listeners---
 let lastMessageTime;
 socket.on("server_message", function (msg) {
     serverMessage.innerHTML = msg;
@@ -72,11 +40,38 @@ socket.on("server_message", function (msg) {
     }, 1500);
 });
 
-function addMessage(text) {
-    let child = document.createElement("li");
-    child.innerHTML = text;
-    messageContainer.prepend(child);
-}
+socket.on("target_sentence", resetStuffAsNewSenteceAppears);
+socket.on("allow_player_to_start_new_game", giveFirstPlayerStartButton);
+
+socket.on("show_players", function (data) {
+  const playersHtml = data.players.map(x => `
+      <div class="player-row">
+          <div class="player-">
+            <span>${x.username}:</span>
+            <span class="score">${x.wordsPerMinute} wpm</span>
+          </div>
+          <div class="avatar-track">
+              <icon style="left: ${x.percentageOfString_int}%">${x.avatar}</icon>
+          </div>
+      </div>
+  `)
+  racingTableEl.innerHTML = playersHtml.join("");
+});
+
+socket.on("player_finished", function (playerData) {
+  chatForm.classList.add("hidden");
+  let newEl = document.createElement("div");
+  newEl.id = "match-completed-screen";
+  newEl.innerHTML = `
+      <h2>👍</h2>
+      <p>Words per minute:${playerData.wordsPerMinute}</p>
+      <p>Chars written:${playerData.charsSoFar}</p>
+      <p>Chars per minute:${playerData.charsPerMinute}</p>
+      <button onclick="clickStartNewGame()">New game</button>
+  `;
+  let footer = document.querySelector("footer");
+  footer.parentNode.insertBefore(newEl, footer);
+});
 
 function askUserName() {
     const usernameModal = document.createElement("div");
@@ -122,36 +117,40 @@ function askUserName() {
     }
 }
 
-socket.on("show_players", function (data) {
-    const playersHtml = data.players.map(x => `
-        <div class="player-row">
-            <div class="player-">
-              <span>${x.username}:</span>
-              <span class="score">${x.wordsPerMinute} wpm</span>
-            </div>
-            <div class="avatar-track">
-                <icon style="left: ${x.percentageOfString_int}%">${x.avatar}</icon>
-            </div>
-        </div>
-    `)
-    racingTableEl.innerHTML = playersHtml.join("");
+//--- DOM event listeners ---
+chatFormInput.addEventListener('input', () => {
+  const input = chatFormInput.value;
+  
+  if (GAME.nextWordTarget.indexOf(input) !==0 ) {
+      GAME.incorrectInput = input;
+  } else {
+      GAME.incorrectInput = "";
+  }
+
+  if (GAME.nextWordTarget.indexOf(input) === 0) {
+      GAME.correctInCurrentWord = input;
+      GAME.totalCorrect = GAME.correctOldWords + GAME.correctInCurrentWord;
+      sentenceInProgressEl.innerText = GAME.totalCorrect;
+      // console.log("correct so far:", GAME.correctInCurrentWord, "remaining:", GAME.remainingTargetText, GAME.remainingTargetTextSplit);
+      GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length)
+      sentenceRemainingEl.innerText = GAME.remainingTargetText;
+  }
+  if (GAME.nextWordTarget === input) {
+      socket.emit("player_move", input);
+      chatFormInput.value = "";
+      GAME.correctOldWords += GAME.totalTargetTextSplit[0];
+      GAME.totalTargetTextSplit.shift();
+      GAME.nextWordTarget = GAME.totalTargetTextSplit[0];
+  } 
+
+  if (GAME.incorrectInput.length > 0) {
+      chatForm.classList.add("error");
+  } else {
+      chatForm.classList.remove("error");
+  }
 });
 
-socket.on("player_finished", function (playerData) {
-    chatForm.classList.add("hidden");
-    let newEl = document.createElement("div");
-    newEl.id = "match-completed-screen";
-    newEl.innerHTML = `
-        <h2>👍</h2>
-        <p>Words per minute:${playerData.wordsPerMinute}</p>
-        <p>Chars written:${playerData.charsSoFar}</p>
-        <p>Chars per minute:${playerData.charsPerMinute}</p>
-        <button onclick="clickStartNewGame()">New game</button>
-    `;
-    let footer = document.querySelector("footer");
-    footer.parentNode.insertBefore(newEl, footer);
-});
-
+//--- Helpers ---
 function clickStartNewGame(e) {
     socket.emit("start_new_game", null);
     console.log("start_new_game");
@@ -172,8 +171,6 @@ function resetStuffBeforeNewGame() {
     const firstPlayerNewGameEl = document.querySelector("#new-game-button-container");
     if (firstPlayerNewGameEl) firstPlayerNewGameEl.remove();
 }
-
-socket.on("target_sentence", resetStuffAsNewSenteceAppears);
 
 function resetStuffAsNewSenteceAppears(msg) {
     GAME.incorrectInput = ""
@@ -196,8 +193,6 @@ function resetStuffAsNewSenteceAppears(msg) {
     const matchCompletedScreen = document.querySelector("#match-completed-screen");
     if (matchCompletedScreen) matchCompletedScreen.remove();
 }
-
-socket.on("allow_player_to_start_new_game", giveFirstPlayerStartButton);
 
 function giveFirstPlayerStartButton() {
     const btn = document.createElement('button')
