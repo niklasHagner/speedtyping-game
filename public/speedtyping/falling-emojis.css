@@ -6,89 +6,88 @@
   position:absolute;
   top:-100px;
   left:0px;
-  -webkit-animation: fallingEmojis1 5s linear 0s infinite;
+  animation: fallingEmojis1 5s linear 0s infinite;
 }
 .game-state--match-completed .falling-emoji--2{
   position:absolute;
   top:-100px;
   left:0px;
-  -webkit-animation: fallingEmojis2 4s linear 1s infinite;
+  animation: fallingEmojis2 4s linear 1s infinite;
 }
 .game-state--match-completed .falling-emoji--3{
   position:absolute;
   top:-100px;
   left:0px;
-  -webkit-animation: fallingEmojis3 5s linear 1.5s infinite;
+  animation: fallingEmojis3 5s linear 1.5s infinite;
 }
 .game-state--match-completed .falling-emoji--4{
   position:absolute;
   top:-100px;
   left:0px;
-  -webkit-animation: fallingEmojis4 4s linear 1.6s infinite;
+  animation: fallingEmojis4 4s linear 1.6s infinite;
 }
 .game-state--match-completed .falling-emoji--5{
   position:absolute;
   top:-100px;
   left:0px;
-  -webkit-animation: fallingEmojis5 5s linear 2s infinite;
+  animation: fallingEmojis5 5s linear 2s infinite;
 }
 .game-state--match-completed .falling-emoji--6{
   position:absolute;
   top:-100px;
   left:0px;
-  -webkit-animation: fallingEmojis6 4s linear 2.1s infinite;
+  animation: fallingEmojis6 4s linear 2.1s infinite;
 }
 .game-state--match-completed .falling-emoji--7 {
   position:absolute;
   top:-100px;
   left:0px;
-  -webkit-animation: fallingEmojis7 5s linear 2.5s infinite;
+  animation: fallingEmojis7 5s linear 2.5s infinite;
 }
 .game-state--match-completed .falling-emoji--8 {
   position:absolute;
   top:-100px;
   left:0px;
-  -webkit-animation: fallingEmojis8 4s linear 2.6s infinite;
+  animation: fallingEmojis8 4s linear 2.6s infinite;
 }
 
-@-webkit-keyframes fallingEmojis1
+@keyframes fallingEmojis1
 {
   0% { top:-3px;left:50%; }
   100% { top:600px;left:55%; }
 }
-@-webkit-keyframes fallingEmojis2
+@keyframes fallingEmojis2
 {
   0% { top:-3px;left:30%; }
   100% { top:600px;left:25%; }
 }
-@-webkit-keyframes fallingEmojis3
+@keyframes fallingEmojis3
 {
   0% { top:-3px;left:90%; }
   100% { top:600px;left:70%; }
 }
-@-webkit-keyframes fallingEmojis4
+@keyframes fallingEmojis4
 {
   0% { top:-3px;left:45%; }
   100% { top:600px;left:48%; }
 }
-@-webkit-keyframes fallingEmojis5
+@keyframes fallingEmojis5
 {
   0% { top:-3px;left:8%; }
   100% { top:600px;left:13%; }
 }
-@-webkit-keyframes fallingEmojis6
+@keyframes fallingEmojis6
 {
   0% { top:-3px;left:78%; }
   100% { top:600px;left:65%; }
 }
-@-webkit-keyframes fallingEmojis7
+@keyframes fallingEmojis7
 {
   0% { top:-3px;left:22%; }
   100% { top:600px;left:33%; }
 }
-@-webkit-keyframes fallingEmojis8
+@keyframes fallingEmojis8
 {
   0% { top:-3px;left:88%; }
   100% { top:600px;left:75%; }
-}
 }
