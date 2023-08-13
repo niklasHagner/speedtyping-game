@@ -21,7 +21,13 @@ const GAME = {
     remainingTargetTextSplit: [],
     incorrectInput: "",
     correctInCurrentWord: "",
-    correctOldWords: ""
+    correctOldWords: "",
+    username: null,
+    states: [
+      { name: "unstarted", active: true },
+      { name: "started", active: false },
+      { name: "match-completed", active: false },
+    ]
 }
 
 //---Socket listeners---
@@ -44,21 +50,29 @@ socket.on("target_sentence", resetStuffAsNewSenteceAppears);
 socket.on("allow_player_to_start_new_game", giveFirstPlayerStartButton);
 
 socket.on("show_players", function (data) {
-  const playersHtml = data.players.map(x => `
-      <div class="player-row">
-          <div class="player-">
-            <span>${x.username}:</span>
+  const players = data.players;
+  players.forEach(x => x.isYou = x.username === GAME.username);
+
+  const playersHtml = 
+    players
+    .sort((a,b) => a.username === b.username ? 0 : (a.username === GAME.username ? -1 : 1) )
+    .map(x => `
+      <div class="player-row ${ x.isYou ? 'player-row--you' : '' }">
+          <div class="player-row__inner">
+            <span>${x.username} ${x.isYou ? ' (you)' : ''}</span>
             <span class="score">${x.wordsPerMinute} wpm</span>
           </div>
           <div class="avatar-track">
               <icon style="left: ${x.percentageOfString_int}%">${x.avatar}</icon>
           </div>
       </div>
-  `)
-  racingTableEl.innerHTML = playersHtml.join("");
+  `).join("");
+  racingTableEl.innerHTML = playersHtml;
 });
 
 socket.on("player_finished", function (playerData) {
+  GAME.states.find(state => state.name === "match-completed").active = true;
+  document.body.classList.add("game-state--match-completed");
   chatForm.classList.add("hidden");
   let newEl = document.createElement("div");
   newEl.id = "match-completed-screen";
@@ -95,7 +109,6 @@ function askUserName() {
     //Speed up development with a preset username
     usernameInput.value = getRandomName();
     
-
     usernameForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const username = usernameInput.value;
@@ -107,6 +120,7 @@ function askUserName() {
     });
 
     function acceptUserNameAndStart(username) {
+        GAME.username = username;
         socket.emit("new_player_with_username_joined", username);
         // document.getElementById("chat-form").classList.remove("hidden");
         // targetSentenceContainer.classList.remove("hidden");
