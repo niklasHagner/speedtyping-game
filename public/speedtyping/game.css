@@ -79,6 +79,7 @@
 #word-matching-area {
     padding: 50px;
     font-size: 0; 
+    max-width: 800px;
 }
 #sentence-in-progress, #sentence-remaining {
     font-size: 24px;
