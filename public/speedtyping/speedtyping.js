@@ -79,9 +79,9 @@ socket.on("player_finished", function (playerData) {
   newEl.id = "match-completed-screen";
   newEl.innerHTML = `
       <h2>👍</h2>
-      <p>Words per minute:${playerData.wordsPerMinute}</p>
-      <p>Chars written:${playerData.charsSoFar}</p>
-      <p>Chars per minute:${playerData.charsPerMinute}</p>
+      <p>Words per minute: ${playerData.wordsPerMinute}</p>
+      <p>Time: ${playerData.seconds} seconds</p>
+      <p>Chars per minute: ${playerData.charsPerMinute}</p>
       <button>New game</button>
   `;
   let footer = document.querySelector("footer");
