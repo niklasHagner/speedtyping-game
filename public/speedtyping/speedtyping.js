@@ -1,8 +1,8 @@
 import { getRandomName } from "./firstNames.js";
 
 // DOM elements
-const chatForm = document.getElementById("chat-form");
-const chatFormInput = document.getElementById("user-input");
+const formEl = document.getElementById("chat-form");
+const userInputEl = document.getElementById("user-input");
 const goodInputPartEl = document.getElementById("correct-input");
 const wrongInputPartEl = document.getElementById("incorrect-input");
 const targetSentenceContainer = document.getElementById("sentence-area");
@@ -73,7 +73,7 @@ socket.on("show_players", function (data) {
 socket.on("player_finished", function (playerData) {
   setGameState("match-completed");
   document.body.classList.add("game-state--match-completed");
-  chatForm.classList.add("hidden");
+  formEl.classList.add("hidden");
   let newEl = document.createElement("div");
   newEl.id = "match-completed-screen";
   newEl.innerHTML = `
@@ -124,7 +124,7 @@ function askUserName() {
     socket.emit("new_player_with_username_joined", username);
     usernameModal.classList.add("hidden");
     window.setTimeout(function () {
-      chatFormInput.focus();
+      userInputEl.focus();
     }, 1);
   }
 }
@@ -136,30 +136,84 @@ function formatInputForDisplay(string) {
   return string.replace(/ /g, '<span class="space">&nbsp;</span>'); // Visualise spaces
 }
 
-function updateSentenceProgress(target, input) {
-  // Use GAME.totalCorrect and GAME.remainingTargetText for split
-  const completed = GAME.totalCorrect || "";
-  const remaining = GAME.remainingTargetText || target.slice((GAME.totalCorrect || "").length);
-
+function updateSentenceProgress(fullSentence, input) {
+  // Split the sentence into words and spaces
+  const parts = fullSentence.match(/\S+|\s+/g) || [];
   let html = '';
-  if (completed.length > 0) {
-    html += `<span class="completed-word">${completed.replace(/ /g, '<span class=\"space\"> </span>')}</span>`;
-    // Render zero-width cursor after completed part
-    html += `<span class="blinky-cursor" style="display:inline-block;width:0;vertical-align:baseline;">_</span>`;
-  } else {
-    // If nothing completed, cursor at start
-    html += `<span class="blinky-cursor" style="display:inline-block;width:0;vertical-align:baseline;">_</span>`;
+  let progressingFound = false;
+  let totalCorrectLen = GAME.totalCorrect ? GAME.totalCorrect.length : 0;
+  let correctIdx = 0;
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (/^\s+$/.test(part)) {
+      // If this space is completed, add class 'completed-part'. If it's the last completed, add 'last-completed-thing'.
+      const isCompletedSpace = !progressingFound && correctIdx + part.length <= totalCorrectLen;
+      // Is this the last completed thing?
+      const isLastCompletedThing = isCompletedSpace && (correctIdx + part.length === totalCorrectLen);
+      html += `<span class="space${isCompletedSpace ? ' completed-part' : ''}${isLastCompletedThing ? ' last-completed-thing' : ''}">${part.replace(/ /g, '&nbsp;')}</span>`;
+      correctIdx += part.length;
+      continue;
+    }
+    // Word
+    if (!progressingFound && correctIdx + part.length <= totalCorrectLen) {
+      // Fully completed word
+      const isLastCompletedThing = (correctIdx + part.length === totalCorrectLen);
+      html += `<span class="completed-word${isLastCompletedThing ? ' last-completed-thing' : ''}">${part}</span>`;
+      correctIdx += part.length;
+      continue;
+    }
+    if (!progressingFound && correctIdx < totalCorrectLen && correctIdx + part.length > totalCorrectLen) {
+      // Progressing word (partially completed)
+      progressingFound = true;
+      const completedPart = part.slice(0, totalCorrectLen - correctIdx);
+      const remainingPart = part.slice(totalCorrectLen - correctIdx);
+      html += `<span class="progressing-word">`;
+      if (completedPart) {
+        // Add last-completed-thing if this is the last completed thing in the sentence
+        const isLastCompletedThing = (correctIdx + completedPart.length === totalCorrectLen);
+        html += `<span class="completed-part${isLastCompletedThing ? ' last-completed-thing' : ''}">${completedPart}</span>`;
+      }
+      // If user is typing, show their input for the progressing word
+      const inputForWord = input.slice(0, remainingPart.length);
+      let firstWrongIdx = -1;
+      for (let j = 0; j < inputForWord.length; j++) {
+        if (inputForWord[j] !== remainingPart[j]) {
+          firstWrongIdx = j;
+          break;
+        }
+      }
+      if (firstWrongIdx === -1) firstWrongIdx = inputForWord.length;
+      // Only render completed-part for the portion that exists in fullSentence
+      if (firstWrongIdx > 0) html += `<span class="completed-part">${remainingPart.slice(0, firstWrongIdx)}</span>`;
+      // Always render remaining-part for the rest of the word
+      if (firstWrongIdx < remainingPart.length) {
+        html += `<span class="remaining-part">${remainingPart.slice(firstWrongIdx)}</span>`;
+      }
+      html += `</span>`;
+      correctIdx += part.length;
+      continue;
+    }
+    if (!progressingFound && correctIdx >= totalCorrectLen) {
+      // Not started yet
+      html += `<span class="word">${part}</span>`;
+      correctIdx += part.length;
+      continue;
+    }
+    // After progressing word, just remaining
+    html += `<span class="word">${part}</span>`;
+    correctIdx += part.length;
   }
-  if (remaining.length > 0) {
-    html += `<span class="remaining-word">${remaining.replace(/ /g, '<span class=\"space\"> </span>')}</span>`;
-  }
+  // If nothing completed and no input, show cursor at start
+  // if (GAME.totalCorrect.length === 0 && input.length === 0) {
+  //   html = `<span class=\"blinky-cursor-in-sentence\">_</span>` + html;
+  // }
   return html;
 }
 
 //--- DOM event listeners ---
-chatFormInput.addEventListener('input', () => {
-  const input = chatFormInput.value;
-
+userInputEl.addEventListener('input', () => {
+  const input = userInputEl.value;
 
   let correctInputPart = "";
   let incorrectInputPart = "";
@@ -180,10 +234,6 @@ chatFormInput.addEventListener('input', () => {
     goodInputPartEl.innerHTML += `<span class="blinky-cursor">|</span>`;
   }
 
-  //  let firstIncorrectIndex = [...input].findIndex((char, i) => char !== GAME.nextWordTarget[i]);
-  // correctInput.innerText = (firstIncorrectIndex === -1) ? input : input.slice(0, firstIncorrectIndex);
-  // correctInput.innerText = (firstIncorrectIndex === -1) ? "" : input.slice(firstIncorrectIndex);
-
   if (GAME.nextWordTarget.indexOf(input) !== 0) {
     GAME.incorrectInput = input;
   } else {
@@ -194,36 +244,31 @@ chatFormInput.addEventListener('input', () => {
     GAME.correctInCurrentWord = input;
     GAME.totalCorrect = GAME.correctOldWords + GAME.correctInCurrentWord;
     GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length);
-    // sentenceRemainingEl.innerHTML = formatSentenceForDisplay(GAME.remainingTargetText);
   }
-
 
   if (GAME.nextWordTarget === input) {
     socket.emit("player_move", input);
-    chatFormInput.value = "";
+    userInputEl.value = "";
     GAME.correctOldWords += GAME.totalTargetTextSplit[0];
     GAME.totalTargetTextSplit.shift();
     GAME.nextWordTarget = GAME.totalTargetTextSplit[0];
   }
 
   if (GAME.incorrectInput.length > 0) {
-    chatForm.classList.add("error");
+    formEl.classList.add("error");
     sentenceInProgressEl.classList.add("error");
 
   } else {
-    chatForm.classList.remove("error");
+    formEl.classList.remove("error");
     sentenceInProgressEl.classList.remove("error");
   }
 
-
-  // Always show the full sentence, coloring completed/remaining
   sentenceInProgressEl.innerHTML = updateSentenceProgress(GAME.totalTargetText, input);
-  
 });
 
 function focusChatInput() {
   inputDisplay.classList.add("focused");
-  chatFormInput.focus();
+  userInputEl.focus();
   if (!goodInputPartEl.querySelector(".blinky-cursor")) {
     goodInputPartEl.innerHTML += `<span class="blinky-cursor">|</span>`;
   }
@@ -232,7 +277,7 @@ function focusChatInput() {
 // Act as a proxy input (cause we gotta style the correct vs wrong parts as spans)
 const inputDisplay = document.getElementById('input-display');
 inputDisplay.addEventListener('click', () => {
-  chatFormInput.focus();
+  userInputEl.focus();
 });
 inputDisplay.addEventListener('focus', () => focusChatInput());
 
@@ -250,7 +295,7 @@ function resetStuffBeforeNewGame() {
   setGameState("unstarted");
   document.body.classList.remove("game-state--match-completed");
   targetSentenceContainer.classList.add("hidden");
-  chatForm.classList.remove("hidden");
+  formEl.classList.remove("hidden");
   const matchCompletedScreen = document.querySelector("#match-completed-screen");
   if (matchCompletedScreen) matchCompletedScreen.remove();
 
@@ -295,7 +340,7 @@ function newTargetSentenceAppears(msg) {
   GAME.nextWordTarget = split[0];
 
   sentenceInProgressEl.innerHTML = updateSentenceProgress(msg, "");
-  chatFormInput.focus();
+  userInputEl.focus();
   const matchCompletedScreen = document.querySelector("#match-completed-screen");
   if (matchCompletedScreen) matchCompletedScreen.remove();
 

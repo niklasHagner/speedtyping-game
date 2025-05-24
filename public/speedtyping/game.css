@@ -137,6 +137,18 @@
   font-size: 0;
   max-width: 800px;
   margin: 0 auto;
+  /* Only break at whole words, never split or dash a word */
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: normal;
+}
+
+#sentence-area span {
+  font-size: 24px;
+  display: inline-block;
+  /* Prevent breaking inside a word span */
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 #sentence-in-progress,
@@ -234,20 +246,39 @@ span#sentence-in-progress.error:after {
 }
 
 .incorrect-chars {
-    color: crimson;
-  }
+  color: crimson;
+}
 
-.completed-word {
-    color: #fab529;
-    font-weight: bold;
-  }
-  .remaining-word {
-    color: whitesmoke;
-    font-weight: normal;
-  }
+.completed-word,
+.completed-part {
+  color: lime;
+  font-weight: bold;
+  position: relative;
+}
+
+.last-completed-thing:after {
+  content: '_';
+  position: absolute;
+  margin: auto;
+  width: 1ch;
+  height: 1em;
+  color: #fab529;
+  font-weight: normal;
+  font-size: 1em;
+  text-align: center;
+  animation: blink-cursor 1s steps(1) infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.remaining-word {
+  color: whitesmoke;
+  font-weight: normal;
+}
 
 
 @keyframes blink-cursor {
+
   0%,
   49% {
     opacity: 1;
@@ -257,4 +288,45 @@ span#sentence-in-progress.error:after {
   100% {
     opacity: 0;
   }
+}
+
+.blinky-cursor,
+.blinky-cursor-in-sentence {
+  display: inline-block;
+  width: 1ch;
+  height: 1em;
+  vertical-align: baseline;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  animation: blink-cursor 1s steps(1) infinite;
+  color: #fab529;
+  /* Prevent line break */
+  white-space: pre;
+}
+
+.blinky-cursor-in-sentence {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: baseline;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  animation: blink-cursor 1s steps(1) infinite;
+  color: #fab529;
+  white-space: pre;
+  position: relative;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
+  /* Render below the last completed letter/space */
+  top: 0.8em;
+}
+
+#sentence-in-progress .blinky-cursor {
+  position: relative;
+  top: 0;
 }
