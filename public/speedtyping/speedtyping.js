@@ -136,7 +136,7 @@ function formatInputForDisplay(string) {
   return string.replace(/ /g, '<span class="space">&nbsp;</span>'); // Visualise spaces
 }
 
-function formatSentenceProgressDisplay(target, input) {
+function updateSentenceProgress(target, input) {
   // Use GAME.totalCorrect and GAME.remainingTargetText for split
   const completed = GAME.totalCorrect || "";
   const remaining = GAME.remainingTargetText || target.slice((GAME.totalCorrect || "").length);
@@ -144,6 +144,11 @@ function formatSentenceProgressDisplay(target, input) {
   let html = '';
   if (completed.length > 0) {
     html += `<span class="completed-word">${completed.replace(/ /g, '<span class=\"space\"> </span>')}</span>`;
+    // Render zero-width cursor after completed part
+    html += `<span class="blinky-cursor" style="display:inline-block;width:0;vertical-align:baseline;">_</span>`;
+  } else {
+    // If nothing completed, cursor at start
+    html += `<span class="blinky-cursor" style="display:inline-block;width:0;vertical-align:baseline;">_</span>`;
   }
   if (remaining.length > 0) {
     html += `<span class="remaining-word">${remaining.replace(/ /g, '<span class=\"space\"> </span>')}</span>`;
@@ -212,7 +217,7 @@ chatFormInput.addEventListener('input', () => {
 
 
   // Always show the full sentence, coloring completed/remaining
-  sentenceInProgressEl.innerHTML = formatSentenceProgressDisplay(GAME.totalTargetText, input);
+  sentenceInProgressEl.innerHTML = updateSentenceProgress(GAME.totalTargetText, input);
   
 });
 
@@ -289,7 +294,7 @@ function newTargetSentenceAppears(msg) {
   GAME.totalTargetTextSplit = split;
   GAME.nextWordTarget = split[0];
 
-  sentenceInProgressEl.innerHTML = formatSentenceProgressDisplay(msg, "");
+  sentenceInProgressEl.innerHTML = updateSentenceProgress(msg, "");
   chatFormInput.focus();
   const matchCompletedScreen = document.querySelector("#match-completed-screen");
   if (matchCompletedScreen) matchCompletedScreen.remove();
