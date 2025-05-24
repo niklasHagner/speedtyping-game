@@ -15,7 +15,6 @@
       }
       .hidden--animated {
         visibility: hidden !important;
-        height: 0 !important;
       }
     </style>
   </head>
@@ -73,6 +72,8 @@
         </div>
       </header>
 
+      <div id="server-message" class="hidden--animated"></div>
+
       <section id="game-status">
         <div id="racing-table"></div>
       </section>
@@ -82,13 +83,13 @@
       </div>
 
       <main id="main">
-        <div id="server-message"></div>
-        <div id="word-matching-area" class="hidden">
+        <div id="sentence-area" class="hidden">
           <span id="sentence-in-progress"></span><span id="sentence-remaining"></span>
         </div>
 
         <form id="chat-form" class="hidden">
-          <input id="chat-input" autocomplete="off" spellcheck="false" tabindex="-1">
+          <div id="input-display" tabindex="0"><span id="correct-input"></span><span id="incorrect-input"></span></div>
+          <input id="user-input" autocomplete="off" spellcheck="false" tabindex="-1">
         </form>
       </main>
       <div class="footer-pusher"></div>

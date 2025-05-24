@@ -3,7 +3,7 @@ const prodMode = false;
 const url = window.location.href;
 var socket = io.connect(url);
 var chatForm = document.getElementById("chat-form");
-var chatFormInput = document.getElementById("chat-input");
+var chatFormInput = document.getElementById("user-input");
 var messageContainer = document.getElementById("messages");
 
 chatForm.addEventListener("submit", e => {

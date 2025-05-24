@@ -1,104 +1,163 @@
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Roboto+Slab:wght@700&family=Share+Tech+Mono&display=swap');
 
 .sentence-message {
-    color: #C4C4C4;
+  color: #C4C4C4;
 }
 
 #chat-form {
-    width: 100%;
-    text-align: center;
-    padding: 15px;
-}
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-#chat-form input {
+  #user-input,
+  #input-display {
     border-style: solid;
     border-width: 1px;
     padding: 10px;
     width: 90%;
     max-width: 600px;
     text-align: center;
+    font-size: 30px;
+    outline: solid 1px #f02a77;
+    background: black;
+    color: #f8993b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+  }
+
+  #user-input {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #input-display {
+
+
+    #incorrect-input {
+      color: crimson;
+
+      .space {
+        background-color: crimson;
+      }
+    }
+
+    #correct-input {
+      color: #f8993b;
+
+      .space {
+        background-color: #f8993b;
+      }
+    }
+  }
+
+
+  #input-display.focused {
+    box-shadow: none;
+    /* Remove border blink, just show blinking cursor */
+    position: relative;
+  }
+
+  #input-display.focused .blinky-cursor {
+    width: 1ch;
+    margin-left: 2px;
+    animation: blink-cursor 1s steps(1) infinite;
+  }
+
 }
 
+#chat-form.error #user-input {
+  color: crimson;
+  outline: solid 1px crimson;
+}
+
+
+
 #chat-form button {
-    width: 100px;
+  width: 100px;
 }
 
 #messages {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow-y: scroll;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
 }
 
 #messages li {
-    padding: 5px 10px;
+  padding: 5px 10px;
 }
 
 #messages li {
-    border-bottom: solid 2px #4e4d4b;
+  border-bottom: solid 2px #4e4d4b;
 }
 
 .username {
-    background-color: #f8993b;
-    color: #222;
-    padding-left: 2px;
-    padding-right: 2px;
+  background-color: #f8993b;
+  color: #222;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .game-info {
-    color: #D54940;
+  color: #D54940;
 }
 
 .game-message strong {
-    color: #f02a77;
+  color: #f02a77;
 }
 
 .target-sentence {
-    background-color: #D54940;
-    color: #111;
+  background-color: #D54940;
+  color: #111;
 }
 
 #username-modal {
-    background-color: #222;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #username-modal form input {
-    width: 160px;
+  width: 160px;
 }
 
-#chat-form.error input {
-    color: crimson;
-    outline: solid 1px crimson;
+
+#sentence-area {
+  padding: 50px;
+  /* hack to remove spacing between spans*/
+  font-size: 0;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-/* hack to remove spacing between spans*/
-#word-matching-area {
-    padding: 50px;
-    font-size: 0; 
-    max-width: 800px;
-}
-#sentence-in-progress, #sentence-remaining {
-    font-size: 24px;
-    position: relative;
+#sentence-in-progress,
+#sentence-remaining {
+  font-size: 24px;
+  position: relative;
 }
 
 #sentence-remaining {
-    color: whitesmoke;
+  color: whitesmoke;
 }
 
 #sentence-in-progress {
-    color: #fab529;
+  color: #fab529;
 }
 
 span#sentence-in-progress:after {
-    content: "|";
-    color: #fab529;
-    position: absolute;
-    right: -7px;
+  content: "|";
+  color: #fab529;
+  position: absolute;
+  right: -7px;
 }
 
 span#sentence-in-progress.error,
@@ -107,11 +166,11 @@ span#sentence-in-progress.error:after {
 }
 
 .score {
-    color:gold;
+  color: gold;
 }
 
 #game-status {
-  background-color: rgba(50,50,50,0.5);
+  background-color: rgba(50, 50, 50, 0.5);
   position: relative;
 }
 
@@ -120,13 +179,13 @@ span#sentence-in-progress.error:after {
 }
 
 .player-row {
-    position: relative;
-    display: block;
-    width: calc(100% - 40px);
-    height: 50px;
-    border-bottom: solid 1px #f02a77;
-    text-align: center;
-    left: 20px;
+  position: relative;
+  display: block;
+  width: calc(100% - 40px);
+  height: 50px;
+  border-bottom: solid 1px #f02a77;
+  text-align: center;
+  left: 20px;
 }
 
 .player-data {
@@ -135,36 +194,61 @@ span#sentence-in-progress.error:after {
 }
 
 .player-row .avatar-track {
-    position: absolute;
-    top: 10px;
-    width: calc(100% - 26px);
-    height: 26px;
+  position: absolute;
+  top: 10px;
+  width: calc(100% - 26px);
+  height: 26px;
 }
 
 .player-row icon {
-    position: absolute;
-    transform: scaleX(-1); /* flip. since most emojis face left and we want it to face right */
-    left: 0px;
-    width: 26px;
-    height: 26px;
+  position: absolute;
+  transform: scaleX(-1);
+  /* flip. since most emojis face left and we want it to face right */
+  left: 0px;
+  width: 26px;
+  height: 26px;
 }
 
 #match-completed-screen {
-    text-align: center;
-    padding: 10px;
+  text-align: center;
+  padding: 10px;
 }
 
 #server-message {
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    background-color: gold;
-    color: black;
-    transition: all 0.3s;
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: gold;
+  color: black;
+  transition: all 0.3s;
+  min-height: 70px;
+  /* avoid jumpyness when hiding */
 }
 
 #lobby {
   text-align: center;
   margin: 20px;
+}
+
+
+@keyframes blink-cursor {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
 }

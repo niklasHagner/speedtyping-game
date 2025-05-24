@@ -2,9 +2,10 @@ import { getRandomName } from "./firstNames.js";
 
 // DOM elements
 const chatForm = document.getElementById("chat-form");
-const chatFormInput = document.getElementById("chat-input");
-const messageContainer = document.getElementById("messages");
-const targetSentenceContainer = document.getElementById("word-matching-area");
+const chatFormInput = document.getElementById("user-input");
+const goodInputPartEl = document.getElementById("correct-input");
+const wrongInputPartEl = document.getElementById("incorrect-input");
+const targetSentenceContainer = document.getElementById("sentence-area");
 const sentenceInProgressEl = document.getElementById("sentence-in-progress");
 const sentenceRemainingEl = document.getElementById("sentence-remaining");
 const racingTableEl = document.getElementById("racing-table");
@@ -39,7 +40,6 @@ socket.on("server_message", function (msg) {
   window.setTimeout(() => {
     const nowTime = new Date().getTime();
     const diff = lastMessageTime && nowTime - lastMessageTime.getTime();
-    console.log("diff", diff);
     if (diff > 1100) {
       serverMessage.classList.add("hidden--animated");
     }
@@ -84,8 +84,7 @@ socket.on("player_finished", function (playerData) {
       <p>Chars per minute: ${playerData.charsPerMinute}</p>
       <button>New game</button>
   `;
-  let footer = document.querySelector("footer");
-  footer.parentNode.insertBefore(newEl, footer);
+  document.querySelector("main").append(newEl);
   document.querySelector("#match-completed-screen button").addEventListener("click", clickStartNewGame);
 });
 
@@ -101,7 +100,7 @@ function askUserName() {
         <p class="hidden">Names have to be 1 to 10 chars</p>
     `;
 
-  document.querySelector("main").append(usernameModal);
+  document.querySelector("main").prepend(usernameModal);
   const usernameForm = document.querySelector("#username-form");
   const usernameInput = usernameForm.querySelector("input");
   window.setTimeout(function () {
@@ -131,9 +130,39 @@ function askUserName() {
   }
 }
 
+function formatInputForDisplay(string) {
+  if (!string || string.length === 0) {
+    return "";
+  }
+  return string.replace(/ /g, '<span class="space">&nbsp;</span>'); // Visualise spaces
+}
+
 //--- DOM event listeners ---
 chatFormInput.addEventListener('input', () => {
   const input = chatFormInput.value;
+
+  let correctInputPart = "";
+  let incorrectInputPart = "";
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === GAME.nextWordTarget[i]) {
+      correctInputPart += input[i];
+    } else {
+      incorrectInputPart = input.slice(i);
+      break;
+    }
+  }
+  goodInputPartEl.innerHTML = formatInputForDisplay(correctInputPart);
+  wrongInputPartEl.innerHTML = formatInputForDisplay(incorrectInputPart);
+
+  if (incorrectInputPart?.length > 0) {
+    wrongInputPartEl.innerHTML += `<span class="blinky-cursor">|</span>`;
+  } else {
+    goodInputPartEl.innerHTML += `<span class="blinky-cursor">|</span>`;
+  }
+
+  //  let firstIncorrectIndex = [...input].findIndex((char, i) => char !== GAME.nextWordTarget[i]);
+  // correctInput.innerText = (firstIncorrectIndex === -1) ? input : input.slice(0, firstIncorrectIndex);
+  // correctInput.innerText = (firstIncorrectIndex === -1) ? "" : input.slice(firstIncorrectIndex);
 
   if (GAME.nextWordTarget.indexOf(input) !== 0) {
     GAME.incorrectInput = input;
@@ -146,9 +175,11 @@ chatFormInput.addEventListener('input', () => {
     GAME.totalCorrect = GAME.correctOldWords + GAME.correctInCurrentWord;
     sentenceInProgressEl.innerText = GAME.totalCorrect;
     // console.log("correct so far:", GAME.correctInCurrentWord, "remaining:", GAME.remainingTargetText, GAME.remainingTargetTextSplit);
-    GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length)
+    GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length);
     sentenceRemainingEl.innerText = GAME.remainingTargetText;
   }
+
+
   if (GAME.nextWordTarget === input) {
     socket.emit("player_move", input);
     chatFormInput.value = "";
@@ -160,9 +191,24 @@ chatFormInput.addEventListener('input', () => {
   if (GAME.incorrectInput.length > 0) {
     chatForm.classList.add("error");
     sentenceInProgressEl.classList.add("error");
+
   } else {
     chatForm.classList.remove("error");
     sentenceInProgressEl.classList.remove("error");
+  }
+  
+});
+
+// Act as a proxy input (cause we gotta style the correct vs wrong parts as spans)
+const inputDisplay = document.getElementById('input-display');
+inputDisplay.addEventListener('click', () => {
+  chatFormInput.focus();
+});
+inputDisplay.addEventListener('focus', () => {
+  inputDisplay.classList.add("focused");
+  chatFormInput.focus();
+  if (!goodInputPartEl.querySelector(".blinky-cursor")) {
+    goodInputPartEl.innerHTML += `<span class="blinky-cursor">|</span>`;
   }
 });
 
@@ -186,6 +232,9 @@ function resetStuffBeforeNewGame() {
 
   const firstPlayerNewGameEl = document.querySelector("#new-game-button-container");
   if (firstPlayerNewGameEl) firstPlayerNewGameEl.remove();
+
+  goodInputPartEl.innerHTML = "";
+  wrongInputPartEl.innerHTML = "";
 }
 
 function setGameState(stateName) {
