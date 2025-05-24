@@ -216,18 +216,20 @@ chatFormInput.addEventListener('input', () => {
   
 });
 
-// Act as a proxy input (cause we gotta style the correct vs wrong parts as spans)
-const inputDisplay = document.getElementById('input-display');
-inputDisplay.addEventListener('click', () => {
-  chatFormInput.focus();
-});
-inputDisplay.addEventListener('focus', () => {
+function focusChatInput() {
   inputDisplay.classList.add("focused");
   chatFormInput.focus();
   if (!goodInputPartEl.querySelector(".blinky-cursor")) {
     goodInputPartEl.innerHTML += `<span class="blinky-cursor">|</span>`;
   }
+}
+
+// Act as a proxy input (cause we gotta style the correct vs wrong parts as spans)
+const inputDisplay = document.getElementById('input-display');
+inputDisplay.addEventListener('click', () => {
+  chatFormInput.focus();
 });
+inputDisplay.addEventListener('focus', () => focusChatInput());
 
 //--- Helpers ---
 function clickStartNewGame(e) {
@@ -252,6 +254,16 @@ function resetStuffBeforeNewGame() {
 
   goodInputPartEl.innerHTML = "";
   wrongInputPartEl.innerHTML = "";
+
+  sentenceInProgressEl.innerHTML = "";
+  GAME.totalCorrect = "";
+  GAME.remainingTargetText = "";
+  GAME.correctInCurrentWord = "";
+  GAME.correctOldWords = "";
+  GAME.totalTargetText = "";
+  GAME.incorrectInput = "";
+
+  focusChatInput();
 }
 
 function setGameState(stateName) {
