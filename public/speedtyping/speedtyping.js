@@ -7,7 +7,6 @@ const goodInputPartEl = document.getElementById("correct-input");
 const wrongInputPartEl = document.getElementById("incorrect-input");
 const targetSentenceContainer = document.getElementById("sentence-area");
 const sentenceInProgressEl = document.getElementById("sentence-in-progress");
-const sentenceRemainingEl = document.getElementById("sentence-remaining");
 const racingTableEl = document.getElementById("racing-table");
 const serverMessage = document.getElementById("server-message");
 const newGameButtonContainer = document.getElementById("new-game-button-container");
@@ -137,9 +136,25 @@ function formatInputForDisplay(string) {
   return string.replace(/ /g, '<span class="space">&nbsp;</span>'); // Visualise spaces
 }
 
+function formatSentenceProgressDisplay(target, input) {
+  // Use GAME.totalCorrect and GAME.remainingTargetText for split
+  const completed = GAME.totalCorrect || "";
+  const remaining = GAME.remainingTargetText || target.slice((GAME.totalCorrect || "").length);
+
+  let html = '';
+  if (completed.length > 0) {
+    html += `<span class="completed-word">${completed.replace(/ /g, '<span class=\"space\"> </span>')}</span>`;
+  }
+  if (remaining.length > 0) {
+    html += `<span class="remaining-word">${remaining.replace(/ /g, '<span class=\"space\"> </span>')}</span>`;
+  }
+  return html;
+}
+
 //--- DOM event listeners ---
 chatFormInput.addEventListener('input', () => {
   const input = chatFormInput.value;
+
 
   let correctInputPart = "";
   let incorrectInputPart = "";
@@ -173,10 +188,8 @@ chatFormInput.addEventListener('input', () => {
   if (GAME.nextWordTarget.indexOf(input) === 0) {
     GAME.correctInCurrentWord = input;
     GAME.totalCorrect = GAME.correctOldWords + GAME.correctInCurrentWord;
-    sentenceInProgressEl.innerText = GAME.totalCorrect;
-    // console.log("correct so far:", GAME.correctInCurrentWord, "remaining:", GAME.remainingTargetText, GAME.remainingTargetTextSplit);
     GAME.remainingTargetText = GAME.totalTargetText.substr(GAME.totalCorrect.length, GAME.totalTargetText.length);
-    sentenceRemainingEl.innerText = GAME.remainingTargetText;
+    // sentenceRemainingEl.innerHTML = formatSentenceForDisplay(GAME.remainingTargetText);
   }
 
 
@@ -196,6 +209,10 @@ chatFormInput.addEventListener('input', () => {
     chatForm.classList.remove("error");
     sentenceInProgressEl.classList.remove("error");
   }
+
+
+  // Always show the full sentence, coloring completed/remaining
+  sentenceInProgressEl.innerHTML = formatSentenceProgressDisplay(GAME.totalTargetText, input);
   
 });
 
@@ -260,8 +277,7 @@ function newTargetSentenceAppears(msg) {
   GAME.totalTargetTextSplit = split;
   GAME.nextWordTarget = split[0];
 
-  sentenceRemainingEl.innerText = msg;
-  sentenceInProgressEl.innerText = "";
+  sentenceInProgressEl.innerHTML = formatSentenceProgressDisplay(msg, "");
   chatFormInput.focus();
   const matchCompletedScreen = document.querySelector("#match-completed-screen");
   if (matchCompletedScreen) matchCompletedScreen.remove();

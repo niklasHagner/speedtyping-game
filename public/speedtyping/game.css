@@ -153,13 +153,6 @@
   color: #fab529;
 }
 
-span#sentence-in-progress:after {
-  content: "|";
-  color: #fab529;
-  position: absolute;
-  right: -7px;
-}
-
 span#sentence-in-progress.error,
 span#sentence-in-progress.error:after {
   color: crimson;
@@ -239,6 +232,19 @@ span#sentence-in-progress.error:after {
   text-align: center;
   margin: 20px;
 }
+
+.incorrect-chars {
+    color: crimson;
+  }
+
+.completed-word {
+    color: #fab529;
+    font-weight: bold;
+  }
+  .remaining-word {
+    color: whitesmoke;
+    font-weight: normal;
+  }
 
 
 @keyframes blink-cursor {
