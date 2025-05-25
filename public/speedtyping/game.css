@@ -66,8 +66,7 @@
   }
 
   #input-display.focused .blinky-cursor {
-    width: 1ch;
-    margin-left: 2px;
+    width: 1px;
     animation: blink-cursor 1s steps(1) infinite;
   }
 
@@ -215,8 +214,18 @@ span#sentence-in-progress.error:after {
 }
 
 #match-completed-screen {
-  text-align: center;
-  padding: 10px;
+  display: inline-block;
+  width: 500px;
+  padding: 20px;
+  border: double 2px red;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(20, 30, 60, 0.9);
+  left: 50%;
+  transform: translate(-50%, 0%);
+  z-index: 999;
+  font-size: 0.7em;
 }
 
 #server-message {
@@ -306,6 +315,10 @@ span#sentence-in-progress.error:after {
   white-space: pre;
 }
 
+.blinky-cursor {
+  width: 1px;
+}
+
 .blinky-cursor-in-sentence {
   display: inline-block;
   width: 0;
@@ -329,4 +342,10 @@ span#sentence-in-progress.error:after {
 #sentence-in-progress .blinky-cursor {
   position: relative;
   top: 0;
+}
+
+.game-state--match-completed {
+  .last-completed-thing:after {
+    display: none;
+  }
 }
