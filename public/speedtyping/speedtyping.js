@@ -85,7 +85,7 @@ socket.on("player_finished", function (playerData) {
       <p>${GAME.mistakesOnWords.length} ${GAME.mistakesOnWords.length === 1 ? "mistake" : "mistakes"}: <span style="font-size:12px">${GAME.mistakesOnWords.join(" ")}</span></p>
       <button>Play another round</button>
   `;
-  document.querySelector(".wrapper").prepend(newEl);
+  document.querySelector(".everything-above-footer").prepend(newEl);
   document.querySelector("#match-completed-screen button").addEventListener("click", clickStartNewGame);
 });
 

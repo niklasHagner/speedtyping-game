@@ -47,9 +47,18 @@ main {
   position: relative;
 }
 
+.body-inner-mega-wrapper {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-footer,
-.footer-pusher {
+.everything-above-footer {
+  flex: 1;
+  padding: 20px;
+}
+
+footer {
   height: 50px;
   padding: 20px;
   font-size: small;
