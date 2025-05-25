@@ -1,7 +1,7 @@
 import { getRandomName } from "./firstNames.js";
 
 // DOM elements
-const formEl = document.getElementById("chat-form");
+const chatForm = document.getElementById("chat-form");
 const userInputEl = document.getElementById("user-input");
 const goodInputPartEl = document.getElementById("correct-input");
 const wrongInputPartEl = document.getElementById("incorrect-input");
@@ -23,6 +23,7 @@ const GAME = {
   correctInCurrentWord: "",
   correctOldWords: "",
   username: null,
+  mistakesOnWords: [], // Push each word where you make an error
   states: [
     { name: "unstarted", active: true },
     { name: "started", active: false },
@@ -73,17 +74,18 @@ socket.on("show_players", function (data) {
 socket.on("player_finished", function (playerData) {
   setGameState("match-completed");
   document.body.classList.add("game-state--match-completed");
-  formEl.classList.add("hidden");
+  chatForm.classList.add("hidden");
   let newEl = document.createElement("div");
   newEl.id = "match-completed-screen";
   newEl.innerHTML = `
-      <h2>👍</h2>
-      <p>Words per minute: ${playerData.wordsPerMinute}</p>
-      <p>Time: ${playerData.seconds} seconds</p>
-      <p>Chars per minute: ${playerData.charsPerMinute}</p>
-      <button>New game</button>
+      <h2>Nice typing 👍</h2>
+      <p>${playerData.seconds} seconds</p>
+      <p>${playerData.wordsPerMinute} words per minute</p>
+      <p>${playerData.charsPerMinute} chars per minute</p>
+      <p>${GAME.mistakesOnWords.length} ${GAME.mistakesOnWords.length === 1 ? "mistake" : "mistakes"}: <span style="font-size:12px">${GAME.mistakesOnWords.join(" ")}</span></p>
+      <button>Play another round</button>
   `;
-  document.querySelector("main").append(newEl);
+  document.querySelector(".wrapper").prepend(newEl);
   document.querySelector("#match-completed-screen button").addEventListener("click", clickStartNewGame);
 });
 
@@ -255,11 +257,13 @@ userInputEl.addEventListener('input', () => {
   }
 
   if (GAME.incorrectInput.length > 0) {
-    formEl.classList.add("error");
+    chatForm.classList.add("error");
     sentenceInProgressEl.classList.add("error");
-
+    if (!GAME.mistakesOnWords.includes(GAME.nextWordTarget)) {
+      GAME.mistakesOnWords.push(GAME.nextWordTarget);
+    }
   } else {
-    formEl.classList.remove("error");
+    chatForm.classList.remove("error");
     sentenceInProgressEl.classList.remove("error");
   }
 
@@ -295,7 +299,7 @@ function resetStuffBeforeNewGame() {
   setGameState("unstarted");
   document.body.classList.remove("game-state--match-completed");
   targetSentenceContainer.classList.add("hidden");
-  formEl.classList.remove("hidden");
+  chatForm.classList.remove("hidden");
   const matchCompletedScreen = document.querySelector("#match-completed-screen");
   if (matchCompletedScreen) matchCompletedScreen.remove();
 
@@ -312,6 +316,7 @@ function resetStuffBeforeNewGame() {
   GAME.correctOldWords = "";
   GAME.totalTargetText = "";
   GAME.incorrectInput = "";
+  GAME.mistakesOnWords = [];
 
   focusChatInput();
 }
