@@ -463,6 +463,11 @@ function updateRoomInfoDisplay(room, errorMessage = null) {
     roomNameEl.textContent = room.name;
     roomPlayerCountEl.textContent = `Players: ${room.playerCount}`;
     // roomCreatorEl.textContent = `Created by: ${room.creator}`;
+    
+    // Update room link when room is loaded
+    if (typeof updateRoomLink === 'function') {
+      updateRoomLink(room.id);
+    }
   } else {
     roomNameEl.textContent = "Loading room...";
     roomPlayerCountEl.textContent = "Players: --";
