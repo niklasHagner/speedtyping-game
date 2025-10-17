@@ -7,16 +7,13 @@ var playerManager = require("./lib/playerManager.js");
 const socketio = require("socket.io");
 
 app.use(function (req, res, next) {
-    console.log("req.url:", req.url);
-    console.info("HEADERS:");
-    console.info(JSON.stringify(req.headers))
+    // console.log("req.url:", req.url);
+    // console.info("HEADERS:");
+    // console.info(JSON.stringify(req.headers));
     next();
 });
 app.use(express.static("public"));
-
-
-//var port = (process && process.env && process.env.PORT) ? Number(process.env.PORT) : 9001;
-//"http://localhost:" + port
+app.use(express.json());
 
 app.get("/", function(req, res) {
     res.sendFile(path.join(__dirname + "/public/speedtyping/index.html"));
@@ -97,6 +94,7 @@ function socketConnectHandler(socket) {
 }
 
 const port = (process && process.env && process.env.PORT) ? Number(process.env.PORT) : 9001;
-const server = http.listen(port, function() {
+
+http.listen(port, function() {
     console.log("listening on ", port);
 });
