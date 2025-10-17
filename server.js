@@ -6,6 +6,7 @@ var game = require("./lib/game.js");
 var playerManager = require("./lib/playerManager.js");
 var roomManager = require("./lib/roomManager.js");
 const socketio = require("socket.io");
+const config = require("exp-config");
 
 app.use(function (req, res, next) {
   // console.log("req.url:", req.url);
