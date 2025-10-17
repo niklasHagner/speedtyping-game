@@ -11,9 +11,23 @@ const racingTableEl = document.getElementById("racing-table");
 const serverMessage = document.getElementById("server-message");
 const newGameButtonContainer = document.getElementById("new-game-button-container");
 
+const socket = io.connect(window.location.origin); // Just the origin, not the full path including gameroom
+socket.on('connect', () => {
+  console.log('✅ Socket connected:', socket.id);
+  // Emit initial load when connected
+  const roomId = getRoomIdFromUrl();
+  socket.emit("initial_client_site_load", { roomId });
+});
+
+socket.on('disconnect', (reason) => {
+  console.log('❌ Socket disconnected, reason:', reason);
+});
+
+socket.on('connect_error', (error) => {
+  console.log('🔥 Connection error:', error);
+});
+
 //---Game state---
-const url = window.location.href;
-const socket = io.connect(url);
 const GAME = {
   totalTargetText: "",
   nextWordTarget: "",
@@ -50,6 +64,18 @@ socket.on("server_message", function (msg) {
 socket.on("prep_new_match", resetStuffBeforeNewGame);
 socket.on("target_sentence", newTargetSentenceAppears);
 socket.on("allow_player_to_start_new_game", giveFirstPlayerStartButton);
+
+// Room-specific error handling
+socket.on("room_error", function(message) {
+  console.error("Socket error:", message);
+  alert("Error: " + message);
+});
+
+socket.on("room_not_found", function(message) {
+  console.error("Room not found:", message);
+  alert("Room not found. Redirecting to lobby...");
+  window.location.href = "/";
+});
 
 socket.on("show_players", function (data) {
   const players = data.players;
@@ -109,8 +135,7 @@ function askUserName() {
     usernameInput.focus();
   }, 1);
 
-  //Speed up development with a preset username
-  usernameInput.value = getRandomName();
+  usernameInput.value = getRandomName(); // Preset username makes it faster to get goin
 
   usernameForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -124,8 +149,20 @@ function askUserName() {
 
   function acceptUserNameAndStart(username) {
     GAME.username = username;
-    socket.emit("new_player_with_username_joined", username);
-    usernameModal.classList.add("hidden");
+    const roomId = getRoomIdFromUrl();
+    console.log(`🔌 Socket ${socket.id} connected`);
+    
+    if (socket.connected) {
+      socket.emit("join_room", { username, roomId });
+      usernameModal.classList.add("hidden");
+    } else {
+      console.log("⏳ Socket not connected, waiting for reconnection...");
+      socket.on('connect', () => {
+        console.log("🔄 Socket reconnected, now emitting join_room");
+        socket.emit("join_room", { username, roomId });
+        usernameModal.classList.add("hidden");
+      });
+    }
     window.setTimeout(function () {
       userInputEl.focus();
     }, 1);
@@ -250,7 +287,8 @@ userInputEl.addEventListener('input', () => {
   }
 
   if (GAME.nextWordTarget === input) {
-    socket.emit("player_move", input);
+    const roomId = getRoomIdFromUrl();
+    socket.emit("player_move", { word: input, roomId });
     userInputEl.value = "";
     GAME.correctOldWords += GAME.totalTargetTextSplit[0];
     GAME.totalTargetTextSplit.shift();
@@ -288,7 +326,8 @@ inputDisplay.addEventListener('focus', () => focusChatInput());
 
 //--- Helpers ---
 function clickStartNewGame(e) {
-  socket.emit("start_new_game", null);
+  const roomId = getRoomIdFromUrl();
+  socket.emit("start_new_game", { roomId });
   console.log("Emit 'start_new_game'");
   resetStuffBeforeNewGame();
   if (e.target) {
@@ -361,7 +400,6 @@ function giveFirstPlayerStartButton() {
   newGameButtonContainer.appendChild(btn);
 }
 
-// Function to get room ID from URL
 function getRoomIdFromUrl() {
   const pathSegments = window.location.pathname.split('/');
   // URL format: /room/:roomId
@@ -371,7 +409,6 @@ function getRoomIdFromUrl() {
   return null;
 }
 
-// Function to load room information
 async function loadRoomInfo() {
   const roomId = getRoomIdFromUrl();
   if (!roomId) {
@@ -400,7 +437,6 @@ async function loadRoomInfo() {
   }
 }
 
-// Function to update room info display
 function updateRoomInfoDisplay(room, errorMessage = null) {
   const roomNameEl = document.getElementById("room-name");
   const roomPlayerCountEl = document.getElementById("room-player-count");
@@ -424,8 +460,7 @@ function updateRoomInfoDisplay(room, errorMessage = null) {
   }
 }
 
-//Initial load
-loadRoomInfo(); // Load room info first
+//---Initial load---
+loadRoomInfo();
 askUserName();
-socket.emit("initial_client_site_load", null);
 

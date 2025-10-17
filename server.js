@@ -8,12 +8,13 @@ var roomManager = require("./lib/roomManager.js");
 const socketio = require("socket.io");
 const config = require("exp-config");
 
-app.use(function (req, res, next) {
-  // console.log("req.url:", req.url);
-  // console.info("HEADERS:");
-  // console.info(JSON.stringify(req.headers));
-  next();
-});
+// app.use(function (req, res, next) {
+//   // console.log("req.url:", req.url);
+//   // console.info("HEADERS:");
+//   // console.info(JSON.stringify(req.headers));
+//   next();
+// });
+
 app.use(express.static("public"));
 app.use(express.json());
 
@@ -37,23 +38,60 @@ io.sockets.on("connection", socketConnectHandler);
 let startButtonSentToPlayerSocketId;
 
 function socketConnectHandler(socket) {
-  socket.on("new_player_with_username_joined", function (username) {
+  console.log("🔌 New socket connection:", socket.id);
+  
+  socket.on("test_connection", function (data) {
+    console.log("🧪 Test connection received:", data, "from socket:", socket.id);
+  });
+  
+  socket.on("disconnect", function (reason) {
+    console.log("💔 Socket disconnected:", socket.id, "Reason:", reason);
+  });
+  
+  socket.on("error", function (error) {
+    console.log("❌ Socket error:", socket.id, "Error:", error);
+  });
+  
+  socket.on("join_room", function (data) {
+    console.log("🏠 join_room event received:", data);
+    const { username, roomId } = data;
+    
+    if (!roomId) {
+      socket.emit("room_error", "Room ID is required");
+      return;
+    }
+    
+    const room = roomManager.getRoom(roomId);
+    if (!room) {
+      socket.emit("room_not_found", "Room not found");
+      return;
+    }
+    
+    socket.join(roomId);
     socket.username = username;
+    socket.roomId = roomId;
+    
+    // Create player and add to room
     const player = playerManager.setUpNewPlayer(socket);
-    io.emit(
+    room.addPlayer(socket.id, player);
+    
+    // Notify room about new player
+    io.to(roomId).emit(
       "is_online",
-      `<div class="game-message game-message--join"><icon>${player.avatar}</icon> <span class="username">${player.username}</span> joined the chat..</div>`
+      `<div class="game-message game-message--join"><icon>${player.avatar}</icon> <span class="username">${player.username}</span> joined the room..</div>`
     );
-
-    io.emit("show_players", { players: playerManager.getPlayers() })
-
-    giveStartButtonToSomePlayer();
-
-    // game.considerStartingGame(io);
+    
+    // Send current players to room
+    io.to(roomId).emit("show_players", { players: room.getPlayers() });
+    
+    giveStartButtonToSomePlayer(roomId);
   });
 
-  function giveStartButtonToSomePlayer() {
-    const players = playerManager.getPlayers();
+  function giveStartButtonToSomePlayer(roomId) {
+    const room = roomManager.getRoom(roomId);
+    if (!room) return;
+    
+    const players = room.getPlayers();
     const canStartGame = players.length >= 1; //allow solo games 
     if (!canStartGame) {
       return;
@@ -63,38 +101,84 @@ function socketConnectHandler(socket) {
     if (messageAlreadySent) {
       return;
     }
-    console.log("Giving NewGame button to", firstPlayerSocketId);
+    console.log("Giving NewGame button to", firstPlayerSocketId, "in room", roomId);
     io.to(firstPlayerSocketId).emit("allow_player_to_start_new_game", null);
     startButtonSentToPlayerSocketId = firstPlayerSocketId;
   }
 
   socket.on("disconnect", function () {
     const username = socket.username;
+    const roomId = socket.roomId;
+    
+    if (!username || !roomId) return;
+    
+    const room = roomManager.getRoom(roomId);
     const player = playerManager.getPlayerByName(username);
-    if (!player) {
+    
+    if (player && room) {
+      // Remove player from room and global manager
+      room.removePlayer(socket.id);
+      playerManager.playerLeavesGame(username);
+      
+      // Notify room about player leaving
+      io.to(roomId).emit(
+        "is_online",
+        `🏃<div class="game-message game-message--join"><span class="username">${username}</span> left the room..</i> <icon>${player.avatar}</icon></div>`
+      );
+      io.to(roomId).emit("show_players", { players: room.getPlayers() });
+      
+      giveStartButtonToSomePlayer(roomId);
+    }
+  });
+
+  socket.on("player_move", function (data) {
+    const { word, roomId } = data;
+    const username = socket.username;
+    
+    if (!roomId || roomId !== socket.roomId) {
+      socket.emit("room_error", "Invalid room");
       return;
     }
-    playerManager.playerLeavesGame(username);
-    io.emit(
-      "is_online",
-      `🏃<div class="game-message game-message--join"><span class="username">${username}</span> left the chat..</i> <icon>${player.avatar}</icon></div>`
-    );
-    io.emit("show_players", { players: playerManager.getPlayers() })
-
-    giveStartButtonToSomePlayer();
+    
+    // Create room-specific io for this room
+    const roomIo = {
+      emit: (event, data) => io.to(roomId).emit(event, data),
+      to: (socketId) => ({
+        emit: (event, data) => io.to(socketId).emit(event, data)
+      })
+    };
+    
+    game.movePlayer(roomIo, username, word, socket.id);
   });
 
-  socket.on("player_move", function (message) {
-    var username = socket.username;
-    game.movePlayer(io, username, message, socket.id);
+  socket.on("initial_client_site_load", function (data) {
+    const { roomId } = data || {};
+    
+    if (roomId) {
+      const room = roomManager.getRoom(roomId);
+      if (room) {
+        io.to(socket.id).emit("show_players", { players: room.getPlayers() });
+      }
+    }
   });
 
-  socket.on("initial_client_site_load", function (message) {
-    io.to(socket.id).emit("show_players", { players: playerManager.getPlayers() })
-  });
-
-  socket.on("start_new_game", function (message) {
-    game.considerStartingGame(io, message, socket);
+  socket.on("start_new_game", function (data) {
+    const { roomId } = data || {};
+    
+    if (!roomId || roomId !== socket.roomId) {
+      socket.emit("room_error", "Invalid room");
+      return;
+    }
+    
+    // Create room-specific io for this room
+    const roomIo = {
+      emit: (event, data) => io.to(roomId).emit(event, data),
+      to: (socketId) => ({
+        emit: (event, data) => io.to(socketId).emit(event, data)
+      })
+    };
+    
+    game.considerStartingGame(roomIo, data, socket);
   });
 
 }
@@ -188,18 +272,18 @@ const port = (process && process.env && process.env.PORT) ? Number(process.env.P
 http.listen(port, function () {
   console.log("listening on ", port);
   
-  if (config.createRoomHehuForDebugging) {
+  if (config.createDebuggyRoomOnAppStart) {
     try {
-      const existingRoom = roomManager.getRoom('hehu');
+      const existingRoom = roomManager.getRoom('debuggy');
       if (!existingRoom) {
-        const debugRoom = roomManager.createRoom('Debug Room', 'DebugUser', 'hehu');
+        const debugRoom = roomManager.createRoom('Debug Room', 'DebugUser', 'debuggy');
         console.log("🐛 Debug room created:", {
           id: debugRoom.id,
           name: debugRoom.name,
-          url: `http://localhost:${port}/room/hehu`
+          url: `http://localhost:${port}/room/debuggy`
         });
       } else {
-        console.log("🐛 Debug room 'hehu' already exists");
+        console.log("🐛 Debug room 'debuggy' already exists");
       }
     } catch (error) {
       console.error("Failed to create debug room:", error.message);
