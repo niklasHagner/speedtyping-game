@@ -23,6 +23,7 @@ const GAME = {
   correctInCurrentWord: "",
   correctOldWords: "",
   username: null,
+  roomInfo: null, // Store room information from API
   mistakesOnWords: [], // Push each word where you make an error
   states: [
     { name: "unstarted", active: true },
@@ -360,7 +361,71 @@ function giveFirstPlayerStartButton() {
   newGameButtonContainer.appendChild(btn);
 }
 
+// Function to get room ID from URL
+function getRoomIdFromUrl() {
+  const pathSegments = window.location.pathname.split('/');
+  // URL format: /room/:roomId
+  if (pathSegments[1] === 'room' && pathSegments[2]) {
+    return pathSegments[2];
+  }
+  return null;
+}
+
+// Function to load room information
+async function loadRoomInfo() {
+  const roomId = getRoomIdFromUrl();
+  if (!roomId) {
+    console.log("No room ID found in URL");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/rooms/${roomId}`);
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Room loaded:", data.room);
+      GAME.roomInfo = data.room;
+      
+      // Update UI elements with room information
+      updateRoomInfoDisplay(data.room);
+    } else {
+      const error = await response.json();
+      console.error("Failed to load room:", error.error);
+      // Handle room not found - show error in room info
+      updateRoomInfoDisplay(null, error.error);
+    }
+  } catch (error) {
+    console.error("Error loading room:", error);
+    updateRoomInfoDisplay(null, "Failed to connect to server");
+  }
+}
+
+// Function to update room info display
+function updateRoomInfoDisplay(room, errorMessage = null) {
+  const roomNameEl = document.getElementById("room-name");
+  const roomPlayerCountEl = document.getElementById("room-player-count");
+  const roomCreatorEl = document.getElementById("room-creator");
+
+  if (errorMessage) {
+    roomNameEl.textContent = "Room Error";
+    roomPlayerCountEl.textContent = errorMessage;
+    roomCreatorEl.textContent = "";
+    return;
+  }
+
+  if (room) {
+    roomNameEl.textContent = room.name;
+    roomPlayerCountEl.textContent = `Players: ${room.playerCount}`;
+    roomCreatorEl.textContent = `Created by: ${room.creator}`;
+  } else {
+    roomNameEl.textContent = "Loading room...";
+    roomPlayerCountEl.textContent = "Players: --";
+    roomCreatorEl.textContent = "Created by: --";
+  }
+}
+
 //Initial load
+loadRoomInfo(); // Load room info first
 askUserName();
 socket.emit("initial_client_site_load", null);
 

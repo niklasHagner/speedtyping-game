@@ -18,11 +18,11 @@ app.use(express.static("public"));
 app.use(express.json());
 
 app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname + "/public/speedtyping/lobby.html"));
+  res.sendFile(path.join(__dirname + "/public/speedtyping/roomcreator.html"));
 });
 
 app.get("/room/:roomId", function (req, res) {
-  res.sendFile(path.join(__dirname + "/public/speedtyping/index.html"));
+  res.sendFile(path.join(__dirname + "/public/speedtyping/gameroom.html"));
 });
 
 app.get("/test", function (req, res) {
@@ -187,4 +187,22 @@ const port = (process && process.env && process.env.PORT) ? Number(process.env.P
 
 http.listen(port, function () {
   console.log("listening on ", port);
+  
+  if (config.createRoomHehuForDebugging) {
+    try {
+      const existingRoom = roomManager.getRoom('hehu');
+      if (!existingRoom) {
+        const debugRoom = roomManager.createRoom('Debug Room', 'DebugUser', 'hehu');
+        console.log("🐛 Debug room created:", {
+          id: debugRoom.id,
+          name: debugRoom.name,
+          url: `http://localhost:${port}/room/hehu`
+        });
+      } else {
+        console.log("🐛 Debug room 'hehu' already exists");
+      }
+    } catch (error) {
+      console.error("Failed to create debug room:", error.message);
+    }
+  }
 });

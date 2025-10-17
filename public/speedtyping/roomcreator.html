@@ -8,7 +8,7 @@
   <link rel="icon" href="/favicon/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="/styles/base.css">
   <link rel="stylesheet" type="text/css" href="/styles/game.css">
-  <link rel="stylesheet" type="text/css" href="/styles/lobby.css">
+  <link rel="stylesheet" type="text/css" href="/styles/roomcreator.css">
 </head>
 
 <body>
@@ -66,7 +66,7 @@
             <button type="submit" class="create-room-btn">CREATE ROOM</button>
           </form>
           <div id="room-link-display" class="room-link-display">
-            <p>Share this link with your friends:</p>
+            <p>Share this link:</p>
             <div class="room-link" id="room-link"></div>
             <button class="copy-link-btn" onclick="copyRoomLink()">COPY LINK</button>
             <p class="success-message" id="copy-success">Link copied to clipboard!</p>
@@ -78,7 +78,7 @@
 
         <div class="lobby-section">
           <h3>Join an Existing Room</h3>
-          <p>Ask your friend for a room link, or select from active rooms below:</p>
+          <p>Ask for a room link, or select from active rooms below:</p>
           <div id="room-list" class="room-list">
             <p>Loading rooms...</p>
           </div>

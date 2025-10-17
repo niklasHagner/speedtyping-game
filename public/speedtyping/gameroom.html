@@ -44,6 +44,40 @@
           transform: translateX(-50%) scaleX(0) scaleY(0.6);
         }
       }
+
+      .room-info {
+        text-align: center;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .room-name {
+        color: #fde80d;
+        font-size: 1.8rem;
+        margin: 0 0 0.5rem 0;
+        text-shadow: 0 0 10px #fde80d;
+      }
+
+      .room-details {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        font-size: 1rem;
+        color: #fff;
+      }
+
+      .room-player-count,
+      .room-creator {
+        padding: 0.25rem 0.75rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
     </style>
   </head>
 
@@ -100,6 +134,16 @@
             <h1 class="glow">SPEED TYPER</h1>
           </div>
         </header>
+
+        <div id="room-info" class="room-info">
+          <div class="room-info-content">
+            <h2 id="room-name" class="room-name">Loading room...</h2>
+            <div class="room-details">
+              <span id="room-player-count" class="room-player-count">Players: --</span>
+              <span id="room-creator" class="room-creator">Created by: --</span>
+            </div>
+          </div>
+        </div>
 
         <div id="server-message" class="hidden--animated"></div>
 
