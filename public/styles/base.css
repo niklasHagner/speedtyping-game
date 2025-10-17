@@ -70,11 +70,12 @@ h1 {
 }
 
 h2 {
-  font-size: 35px;
+  font-size: 40px;
 }
 
 h3 {
-  font-size: 30px;
+  font-size: 40px;
+  font-weight: bold;
 }
 
 input {
@@ -120,4 +121,8 @@ header svg {
   -moz-filter: url(#glow);
   -o-filter: url(#blurFilter);
   -ms-filter: url(#glow);
+}
+
+.path-divider {
+  color: rgb(108, 14, 14);
 }

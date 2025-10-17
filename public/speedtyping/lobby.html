@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Speed Type - Lobby</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="/favicon/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/styles/base.css">
+  <link rel="stylesheet" type="text/css" href="/styles/game.css">
+  <style>
+    .lobby-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .lobby-section {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #ff00ff;
+      border-radius: 10px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+    }
+
+    .create-room-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .room-name-input {
+      padding: 10px 20px;
+      font-size: 1.2em;
+      background: rgba(255, 0, 255, 0.1);
+      border: 2px solid #ff00ff;
+      color: #fff;
+      border-radius: 5px;
+      width: 300px;
+      text-align: center;
+    }
+
+    .room-name-input:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+    }
+
+    .create-room-btn, .join-room-btn {
+      padding: 15px 40px;
+      font-size: 1.3em;
+      background: linear-gradient(45deg, #ff00ff, #ff0080);
+      border: none;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .create-room-btn:hover, .join-room-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+    }
+
+    .room-link-display {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid #00ffff;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .room-link {
+      color: #00ffff;
+      font-size: 1.1em;
+      word-break: break-all;
+      margin: 10px 0;
+    }
+
+    .copy-link-btn {
+      padding: 10px 20px;
+      background: #00ffff;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .copy-link-btn:hover {
+      background: #00cccc;
+    }
+
+    .or-divider {
+      color: #ff00ff;
+      font-size: 1.5em;
+      margin: 30px 0;
+      position: relative;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ff00ff, transparent);
+    }
+
+    .or-divider::before {
+      left: 0;
+    }
+
+    .or-divider::after {
+      right: 0;
+    }
+
+    .room-list {
+      margin-top: 20px;
+    }
+
+    .room-item {
+      background: rgba(255, 0, 255, 0.1);
+      border: 1px solid #ff00ff;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .room-item:hover {
+      background: rgba(255, 0, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .room-info {
+      text-align: left;
+    }
+
+    .room-name {
+      color: #ff00ff;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .room-players {
+      color: #fff;
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+
+    .join-btn {
+      padding: 8px 20px;
+      background: #00ff00;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .join-btn:hover {
+      background: #00cc00;
+      transform: scale(1.05);
+    }
+
+    .error-message {
+      color: #ff0066;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .success-message {
+      color: #00ff00;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="body-inner-mega-wrapper">
+    <div class="everything-above-footer">
+      <header>
+        <div id="retro-logo-wrapper">
+          <svg id=sun version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur id="glowfeGaussianBlur" stdDeviation="5.1" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="outrun_grad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#fde80d" />
+              <stop offset="18%" stop-color="#fcd119" />
+              <stop offset="33%" stop-color="#f9a92f" />
+              <stop offset="48%" stop-color="#f68145" />
+              <stop offset="63%" stop-color="#f24069" />
+              <stop offset="76%" stop-color="#ef1c7d" />
+              <stop offset="91%" stop-color="#ed008c" />
+              <stop offset="100%" stop-color="#ed008c" />
+            </linearGradient>
+            <clipPath id="outrun">
+              <rect x="0" y="0" width="200" height="60" />
+              <rect x="0" y="62.5" width="200" height="10" />
+              <rect x="0" y="76" width="200" height="10" />
+              <rect x="0" y="91" width="200" height="10" />
+              <rect x="0" y="107" width="200" height="9.5" />
+              <rect x="0" y="124" width="200" height="9" />
+              <rect x="0" y="140" width="200" height="8.5" />
+              <rect x="0" y="155" width="200" height="8" />
+              <rect x="0" y="170" width="200" height="7.5" />
+            </clipPath>
+            <circle cx="100" cy="100" r="100" clip-path="url(#outrun)" fill=url(#outrun_grad) filter=url(#glow) />
+          </svg>
+          <h1 class="glow">SPEED TYPER <span class="path-divider">></span> <span class="lobby-title">LOBBY</span></h1>
+        </div>
+      </header>
+
+      <div class="lobby-container">
+        <div class="lobby-section">
+          <h3>Create a New Room</h3>
+          <form class="create-room-form" id="create-room-form">
+            <input 
+              type="text" 
+              id="room-name-input" 
+              class="room-name-input" 
+              placeholder="room name" 
+              maxlength="30"
+              required
+            />
+            <button type="submit" class="create-room-btn">CREATE ROOM</button>
+          </form>
+          <div id="room-link-display" class="room-link-display">
+            <p>Share this link with your friends:</p>
+            <div class="room-link" id="room-link"></div>
+            <button class="copy-link-btn" onclick="copyRoomLink()">COPY LINK</button>
+            <p class="success-message" id="copy-success">Link copied to clipboard!</p>
+          </div>
+          <p class="error-message" id="create-error"></p>
+        </div>
+
+        <div class="or-divider">OR</div>
+
+        <div class="lobby-section">
+          <h3>Join an Existing Room</h3>
+          <p>Ask your friend for a room link, or select from active rooms below:</p>
+          <div id="room-list" class="room-list">
+            <p>Loading rooms...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      Hagge ™
+    </footer>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    
+    document.getElementById("create-room-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const roomName = document.getElementById("room-name-input").value.trim();
+      if (!roomName) return;
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/rooms`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: roomName })
+        });
+        
+        if (response.ok) {
+          const room = await response.json();
+          const roomUrl = `${window.location.origin}/room/${room.id}`;
+          
+          // Display room link
+          document.getElementById("room-link").textContent = roomUrl;
+          document.getElementById("room-link-display").style.display = "block";
+          
+          // Auto redirect after 3 seconds
+          setTimeout(() => {
+            window.location.href = roomUrl;
+          }, 3000);
+        } else {
+          const error = await response.json();
+          document.getElementById("create-error").textContent = error.message || "Failed to create room";
+          document.getElementById("create-error").style.display = "block";
+        }
+      } catch (error) {
+        document.getElementById("create-error").textContent = "Connection error. Please try again.";
+        document.getElementById("create-error").style.display = "block";
+      }
+    });
+    
+    function copyRoomLink() {
+      const roomLink = document.getElementById("room-link").textContent;
+      navigator.clipboard.writeText(roomLink).then(() => {
+        document.getElementById("copy-success").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("copy-success").style.display = "none";
+        }, 2000);
+      });
+    }
+    
+    async function renderActiveRooms() {
+      try {
+        const response = await fetch(`${API_BASE}/api/rooms`);
+        if (response.ok) {
+          const rooms = await response.json();
+          const roomList = document.getElementById("room-list");
+          
+          if (rooms.length === 0) {
+            roomList.innerHTML = "<p>No active rooms. Create one above!</p>";
+          } else {
+            roomList.innerHTML = rooms.map(room => `
+              <div class="room-item">
+                <div class="room-info">
+                  <div class="room-name">${room.name}</div>
+                  <div class="room-players">${room.playerCount} player${room.playerCount !== 1 ? "s" : ""}</div>
+                </div>
+                <button class="join-btn" onclick="joinRoom("${room.id}")">JOIN</button>
+              </div>
+            `).join("");
+          }
+        }
+      } catch (error) {
+        document.getElementById("room-list").innerHTML = "<p>Failed to load rooms</p>";
+      }
+    }
+    
+    function joinRoom(roomId) {
+      window.location.href = `/room/${roomId}`;
+    }
+    
+    renderActiveRooms();
+    
+    setInterval(renderActiveRooms, 5000);
+  </script>
+</body>
+
+</html>
