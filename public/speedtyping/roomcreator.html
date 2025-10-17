@@ -154,7 +154,7 @@
                   <div class="room-name">${room.name}</div>
                   <div class="room-players">${room.playerCount} player${room.playerCount !== 1 ? "s" : ""}</div>
                 </div>
-                <button class="join-btn" onclick="joinRoom("${room.id}")">JOIN</button>
+                <button class="join-btn" onclick="joinRoom('${room.id}')">JOIN</button>
               </div>
             `).join("");
           }
