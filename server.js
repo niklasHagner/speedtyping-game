@@ -44,6 +44,24 @@ function socketConnectHandler(socket) {
     console.log("🧪 Test connection received:", data, "from socket:", socket.id);
   });
   
+  // Allow users to join room as observers before entering username
+  socket.on("join_room_as_observer", function (data) {
+    const { roomId } = data;
+    console.log("👀 Observer joining room:", roomId);
+    
+    if (!roomId) return;
+    
+    const room = roomManager.getRoom(roomId);
+    if (!room) return;
+    
+    // Join the socket room but don't add as player yet
+    socket.join(roomId);
+    socket.roomId = roomId;
+    
+    // Send current player list to this observer
+    socket.emit("show_players", { players: room.getPlayers() });
+  });
+  
   socket.on("disconnect", function (reason) {
     console.log("💔 Socket disconnected:", socket.id, "Reason:", reason);
   });
@@ -82,6 +100,8 @@ function socketConnectHandler(socket) {
     );
     
     // Send current players to room
+    console.log("👥 Sending player list to room", roomId, "with players:", room.getPlayers().map(p => p.username));
+    console.log("🏠 Room players count:", room.getPlayers().length);
     io.to(roomId).emit("show_players", { players: room.getPlayers() });
     
     giveStartButtonToSomePlayer(roomId);

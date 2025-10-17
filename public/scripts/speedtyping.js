@@ -16,6 +16,12 @@ socket.on('connect', () => {
   console.log('✅ Socket connected:', socket.id);
   // Emit initial load when connected
   const roomId = getRoomIdFromUrl();
+  
+  // Join room immediately as observer (before username entry)
+  if (roomId) {
+    socket.emit("join_room_as_observer", { roomId });
+  }
+  
   socket.emit("initial_client_site_load", { roomId });
 });
 
@@ -78,8 +84,16 @@ socket.on("room_not_found", function(message) {
 });
 
 socket.on("show_players", function (data) {
+  console.log("👥 Received show_players event with:", data.players.map(p => p.username));
   const players = data.players;
   players.forEach(x => x.isYou = x.username === GAME.username);
+
+  // Update room info display with current player count
+  if (GAME.roomInfo) {
+    GAME.roomInfo.playerCount = players.length;
+    GAME.roomInfo.players = players;
+    updateRoomInfoDisplay(GAME.roomInfo);
+  }
 
   const playersHtml =
     players
@@ -452,7 +466,7 @@ function updateRoomInfoDisplay(room, errorMessage = null) {
   if (room) {
     roomNameEl.textContent = room.name;
     roomPlayerCountEl.textContent = `Players: ${room.playerCount}`;
-    roomCreatorEl.textContent = `Created by: ${room.creator}`;
+    // roomCreatorEl.textContent = `Created by: ${room.creator}`;
   } else {
     roomNameEl.textContent = "Loading room...";
     roomPlayerCountEl.textContent = "Players: --";
