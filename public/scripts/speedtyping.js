@@ -11,13 +11,10 @@ const racingTableEl = document.getElementById("racing-table");
 const serverMessage = document.getElementById("server-message");
 const newGameButtonContainer = document.getElementById("new-game-button-container");
 
-const socket = io.connect(window.location.origin); // Just the origin, not the full path including gameroom
+const socket = io.connect(window.location.origin);
 socket.on('connect', () => {
   console.log('✅ Socket connected:', socket.id);
-  // Emit initial load when connected
-  const roomId = getRoomIdFromUrl();
-  
-  // Join room immediately as observer (before username entry)
+  const roomId = getRoomIdFromUrl(); 
   if (roomId) {
     socket.emit("join_room_as_observer", { roomId });
   }
@@ -33,7 +30,6 @@ socket.on('connect_error', (error) => {
   console.log('🔥 Connection error:', error);
 });
 
-//---Game state---
 const GAME = {
   totalTargetText: "",
   nextWordTarget: "",
