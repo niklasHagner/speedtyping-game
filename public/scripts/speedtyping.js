@@ -132,7 +132,7 @@ function askUserName() {
   usernameModal.innerHTML = `
         <h2>Enter your name</h2>
         <form id="username-form">
-            <input id="user-name-enter-input" style="width: 10ch;" type="text" minlength="1" maxlength="10" tabindex="-1">
+            <input id="user-name-enter-input" style="width: 10ch;" type="text" autocomplete="off" minlength="1" maxlength="10" tabindex="-1">
             <button type="submit">Submit</button>
         </form>
         <p class="hidden">Names have to be 1 to 10 chars</p>
