@@ -18,21 +18,39 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 
-.room-name-input {
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.form-group label {
+  color: #ff00ff;
+  font-size: 1.1em;
+  font-weight: bold;
+  min-width: 120px;
+  text-align: right;
+}
+
+.room-name-input,
+.creator-name-input {
   padding: 10px 20px;
   font-size: 1.2em;
   background: rgba(255, 0, 255, 0.1);
   border: 2px solid #ff00ff;
   color: #fff;
   border-radius: 5px;
-  width: 300px;
+  flex: 1;
   text-align: center;
+  max-width: 300px;
 }
 
-.room-name-input:focus {
+.room-name-input:focus,
+.creator-name-input:focus {
   outline: none;
   box-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
 }

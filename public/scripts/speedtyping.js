@@ -419,6 +419,11 @@ function getRoomIdFromUrl() {
   return null;
 }
 
+function getUrlParameter(name) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(name);
+}
+
 async function loadRoomInfo() {
   const roomId = getRoomIdFromUrl();
   if (!roomId) {
@@ -477,5 +482,29 @@ function updateRoomInfoDisplay(room, errorMessage = null) {
 
 //---Initial load---
 loadRoomInfo();
-askUserName();
+
+// Check if user is the creator (coming from room creation)
+const creatorName = getUrlParameter('creator');
+if (creatorName) {
+  // User is the creator, set their name automatically
+  GAME.username = creatorName;
+  const roomId = getRoomIdFromUrl();
+  console.log(`👑 Auto-setting creator username: ${creatorName}`);
+  
+  if (socket.connected) {
+    socket.emit("join_room", { username: creatorName, roomId });
+  } else {
+    socket.on('connect', () => {
+      socket.emit("join_room", { username: creatorName, roomId });
+    });
+  }
+  
+  // Remove creator parameter from URL to keep it clean
+  const url = new URL(window.location);
+  url.searchParams.delete('creator');
+  window.history.replaceState({}, document.title, url);
+} else {
+  // Regular user, ask for name
+  askUserName();
+}
 

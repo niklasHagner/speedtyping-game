@@ -55,23 +55,32 @@
         <div class="lobby-section">
           <h3>Create a New Room</h3>
           <form class="create-room-form" id="create-room-form">
-            <input 
-              type="text" 
-              id="room-name-input" 
-              class="room-name-input" 
-              placeholder="room name" 
-              maxlength="30"
-              autocomplete="off"
-              required
-            />
+            <div class="form-group">
+              <label for="creator-name-input">You:</label>
+              <input 
+                type="text" 
+                id="creator-name-input" 
+                class="creator-name-input" 
+                placeholder="your name" 
+                maxlength="10"
+                autocomplete="off"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="room-name-input">Room:</label>
+              <input 
+                type="text" 
+                id="room-name-input" 
+                class="room-name-input" 
+                placeholder="Room name" 
+                maxlength="10"
+                autocomplete="off"
+                required
+              />
+            </div>
             <button type="submit" class="button--create-room">CREATE ROOM</button>
           </form>
-          <div id="room-link-display" class="room-link-display">
-            <p>Share this link:</p>
-            <div class="room-link" id="room-link"></div>
-            <button class="copy-link-btn" onclick="copyRoomLink()">COPY LINK</button>
-            <p class="success-message" id="copy-success">Link copied to clipboard!</p>
-          </div>
           <p class="error-message" id="create-error"></p>
         </div>
 
@@ -94,11 +103,28 @@
   <script>
     const API_BASE = window.location.origin;
     
+    // Preset a random name for the creator
+    document.addEventListener('DOMContentLoaded', () => {
+      const firstNames = [
+        "Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry", "Ivy", "Jack",
+        "Kate", "Liam", "Maya", "Noah", "Olivia", "Paul", "Quinn", "Ruby", "Sam", "Tara",
+        "Uma", "Victor", "Willow", "Xander", "Yara", "Zoe", "Aiden", "Bella", "Caleb", "Demi"
+      ];
+      
+      function getRandomName() {
+        return firstNames[Math.floor(Math.random() * firstNames.length)];
+      }
+      
+      document.getElementById("creator-name-input").value = getRandomName();
+    });
+    
     document.getElementById("create-room-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       
+      const creatorName = document.getElementById("creator-name-input").value.trim();
       const roomName = document.getElementById("room-name-input").value.trim();
-      if (!roomName) return;
+      
+      if (!creatorName || !roomName) return;
       
       try {
         const response = await fetch(`${API_BASE}/api/rooms`, {
@@ -106,17 +132,14 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name: roomName, creator: "LobbyUser" }),
+          body: JSON.stringify({ name: roomName, creator: creatorName }),
         });
         
         if (response.ok) {
           const createdRoomJsonResponse = await response.json();
           const room = createdRoomJsonResponse.room;
-          const roomUrl = `${window.location.origin}/room/${room.id}`;
-          
-          // Display room link
-          document.getElementById("room-link").textContent = roomUrl;
-          document.getElementById("room-link-display").style.display = "block";
+          const roomUrl = `${window.location.origin}/room/${room.id}?creator=${encodeURIComponent(creatorName)}`;
+          window.location.href = roomUrl;
         } else {
           const error = await response.json();
           document.getElementById("create-error").textContent = error.message || "Failed to create room";
