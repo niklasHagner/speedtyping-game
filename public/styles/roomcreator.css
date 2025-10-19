@@ -37,25 +37,34 @@
   box-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
 }
 
-.create-room-btn,
-.join-room-btn {
+
+.button--create-room,
+.button--join-room {
   padding: 15px 40px;
   font-size: 1.3em;
   background: linear-gradient(45deg, #ff00ff, #ff0080);
-  border: none;
   color: #fff;
   border-radius: 32px;
-  cursor: pointer;
   text-transform: uppercase;
-  font-weight: bold;
-  transition: all 0.3s ease;
+}
+
+.button--create-room {
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-.create-room-btn:hover,
-.join-room-btn:hover {
-  transform: scale(1.05);
+.button--create-room:hover,
+.button--join-room:hover {
   box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+.button--join-room {
+  padding: 8px 20px;
+  background: #00ff00;
+  color: #000;
+}
+
+.button--join-room:hover {
+  background: #00cc00;
 }
 
 .room-link-display {
@@ -150,22 +159,6 @@
   color: #fff;
   font-size: 0.9em;
   margin-top: 5px;
-}
-
-.join-btn {
-  padding: 8px 20px;
-  background: #00ff00;
-  color: #000;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.join-btn:hover {
-  background: #00cc00;
-  transform: scale(1.05);
 }
 
 .error-message {
